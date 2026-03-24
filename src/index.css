@@ -57,7 +57,7 @@ select {
   background:
     radial-gradient(circle at top right, rgba(197, 160, 101, 0.18), transparent 24%),
     linear-gradient(135deg, #f7f3e7 0%, #efe8d1 100%);
-  padding: 8px 0 60px;
+  padding: 10px 0 60px;
   border-bottom: 1px solid rgba(85, 107, 47, 0.08);
 }
 
@@ -70,8 +70,8 @@ select {
   align-items: center;
   gap: 16px;
   width: min(1240px, 100%);
-  margin: 0 auto 8px;
-  padding: 2px 10px;
+  margin: 2 auto 8px;
+  padding: 2px 12px;
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.78);
   backdrop-filter: blur(14px);
