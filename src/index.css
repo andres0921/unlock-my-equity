@@ -91,9 +91,9 @@ select {
 }
 
 .brand-logo {
-  width: 238px;
+  width: 338px;
   height: auto;
-  max-height: 156px;
+  max-height: 256px;
   object-fit: contain;
   display: block;
 }
