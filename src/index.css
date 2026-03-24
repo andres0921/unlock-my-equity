@@ -15,7 +15,7 @@
   --radius-lg: 20px;
   --radius-md: 14px;
   --container: 1180px;
-  --nav-offset: 108px;
+  --nav-offset: 96px;
 }
 
 * {
@@ -57,22 +57,22 @@ select {
   background:
     radial-gradient(circle at top right, rgba(197, 160, 101, 0.18), transparent 24%),
     linear-gradient(135deg, #f7f3e7 0%, #efe8d1 100%);
-  padding: 18px 0 72px;
+  padding: 12px 0 72px;
   border-bottom: 1px solid rgba(85, 107, 47, 0.08);
 }
 
 .nav {
   position: sticky;
-  top: 14px;
+  top: 10px;
   z-index: 30;
   display: grid;
   grid-template-columns: 160px 1fr 190px;
   align-items: center;
   gap: 16px;
-  margin-bottom: 36px;
-  padding: 10px 16px;
-  min-height: 82px;
-  border-radius: 22px;
+  width: min(1040px, 100%);
+  margin: 0 auto 22px;
+  padding: 4px 14px;
+  border-radius: 20px;
   background: rgba(255, 255, 255, 0.78);
   backdrop-filter: blur(14px);
   border: 1px solid rgba(85, 107, 47, 0.12);
@@ -91,9 +91,9 @@ select {
 }
 
 .brand-logo {
-  width: 264px;
+  width: 138px;
   height: auto;
-  max-height: 170px;
+  max-height: 56px;
   object-fit: contain;
   display: block;
 }
@@ -110,9 +110,9 @@ select {
   text-decoration: none;
   color: rgba(36, 48, 24, 0.84);
   font-weight: 700;
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   line-height: 1;
-  padding: 10px 14px;
+  padding: 8px 12px;
   border-radius: 999px;
   transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
   white-space: nowrap;
@@ -150,10 +150,10 @@ select {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 12px 16px;
-  min-height: 46px;
+  padding: 10px 14px;
+  min-height: 40px;
   white-space: nowrap;
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   line-height: 1;
 }
 
@@ -895,6 +895,7 @@ section {
   .nav {
     grid-template-columns: 1fr;
     justify-items: center;
+    gap: 10px;
   }
 
   .nav-links {
@@ -909,9 +910,9 @@ section {
   }
 
   .brand-logo {
-  width: 132px;
-  max-height: 54px;
-}
+    width: 126px;
+    max-height: 52px;
+  }
 
   .nav-cta {
     justify-self: center;
@@ -920,7 +921,7 @@ section {
 
 @media (max-width: 768px) {
   :root {
-    --nav-offset: 92px;
+    --nav-offset: 84px;
   }
 
   .hero {
@@ -955,16 +956,15 @@ section {
 
   .nav {
     grid-template-columns: 1fr;
-    gap: 12px;
-    padding: 10px 12px;
-    top: 10px;
-    margin-bottom: 26px;
-    min-height: unset;
+    gap: 8px;
+    padding: 4px 10px;
+    top: 8px;
+    margin-bottom: 18px;
   }
 
   .brand-logo {
-    width: 118px;
-    max-height: 60px;
+    width: 112px;
+    max-height: 46px;
   }
 
   .nav-links {
