@@ -93,7 +93,7 @@ select {
 .brand-logo {
   width: 138px;
   height: auto;
-  max-height: 56px;
+  max-height: 156px;
   object-fit: contain;
   display: block;
 }
