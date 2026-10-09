@@ -1,7 +1,20 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CONTACT_ENDPOINT, PHONE, PREAPPROVAL_LINK } from "./site";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const FIELDS = ["name", "email", "phone", "state", "company"];
+
+function readFields(formEl) {
+  const data = new FormData(formEl);
+  return Object.fromEntries(FIELDS.map((k) => [k, String(data.get(k) ?? "")]));
+}
+
+// Keep whichever value is non-empty, preferring what's in the field.
+function mergeTyped(state, typed) {
+  const out = { ...state };
+  for (const k of FIELDS) if (typed[k]) out[k] = typed[k];
+  return out;
+}
 
 /**
  * "Take the next step" form. Sends the visitor's details (plus their
@@ -19,19 +32,36 @@ export function LeadForm({ estimate }) {
   const [status, setStatus] = useState("idle"); // idle | sending | sent | fallback | error
   const [error, setError] = useState("");
 
+  const formRef = useRef(null);
+
   const update = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
+
+  // The page is pre-rendered, so a visitor on a slow connection can start
+  // typing before the app loads. Pick up anything already in the fields so it
+  // isn't lost or ignored.
+  useEffect(() => {
+    const el = formRef.current;
+    if (!el) return;
+    const typed = readFields(el);
+    if (Object.values(typed).some(Boolean)) {
+      setForm((f) => mergeTyped(f, typed));
+    }
+  }, []);
 
   async function onSubmit(e) {
     e.preventDefault();
     setError("");
-    if (!form.name.trim() || !EMAIL_RE.test(form.email.trim())) {
+    // What's on screen is the source of truth.
+    const values = mergeTyped(form, readFields(e.currentTarget));
+    setForm(values);
+    if (!values.name.trim() || !EMAIL_RE.test(values.email.trim())) {
       setError("Please add your name and a valid email.");
       return;
     }
     setStatus("sending");
 
     const details = [
-      { label: "Property state", value: form.state },
+      { label: "Property state", value: values.state },
       { label: "Source", value: "unlockmyequityusa.com" },
     ];
     if (estimate?.estimatedLine) {
@@ -49,12 +79,12 @@ export function LeadForm({ estimate }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: form.name.trim(),
-          email: form.email.trim(),
-          phone: form.phone.trim(),
+          name: values.name.trim(),
+          email: values.email.trim(),
+          phone: values.phone.trim(),
           interest: "HELOC (Unlock My Equity USA)",
           details: details.filter((d) => d.value),
-          company: form.company,
+          company: values.company,
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -83,7 +113,7 @@ export function LeadForm({ estimate }) {
   }
 
   return (
-    <form className="mini-form" onSubmit={onSubmit} noValidate>
+    <form ref={formRef} className="mini-form" onSubmit={onSubmit} noValidate>
       <div className="mini-form-row">
         <input
           type="text"
