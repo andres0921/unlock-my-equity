@@ -1,10 +1,20 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.jsx";
+import { findRoute } from "./routes.js";
 import "./index.css";
 
-ReactDOM.createRoot(document.getElementById("root")).render(
+const { Component } = findRoute(window.location.pathname);
+const root = document.getElementById("root");
+const app = (
   <React.StrictMode>
-    <App />
+    <Component />
   </React.StrictMode>
 );
+
+// Pages are pre-rendered at build time (prerender.js); in `vite dev` the root
+// is empty, so render from scratch there.
+if (root.firstElementChild) {
+  ReactDOM.hydrateRoot(root, app);
+} else {
+  ReactDOM.createRoot(root).render(app);
+}

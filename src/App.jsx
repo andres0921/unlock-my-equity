@@ -1,17 +1,7 @@
 import React, { useMemo, useState } from "react";
-import "./index.css";
-
-const PREAPPROVAL_LINK =
-  "https://axenmortgageheloc.com/account/heloc/register?referrer=45c7a24f-ed59-4272-9b9c-65d3850bc9b8";
-
-const NMLS_CONSUMER_ACCESS_LINK =
-  "https://nmlsconsumeraccess.org/TuringTestPage.aspx?ReturnUrl=/EntityDetails.aspx/COMPANY/1660690";
-
-const TEXAS_NOTICE_LINK =
-  "https://acrobat.adobe.com/id/urn:aaid:sc:US:9d6a8f3f-a8e0-4c41-95c5-45bc4c8c2845";
-
-const PRIVACY_POLICY_LINK = "https://axenmortgage.com/privacy-policy-2/";
-const TERMS_OF_SERVICE_LINK = "https://axenmortgageheloc.com/terms";
+import { FAQS, GUIDES, PREAPPROVAL_LINK } from "./site";
+import { Footer } from "./Footer";
+import { LeadForm } from "./LeadForm";
 
 const STATES = [
   "Alabama",
@@ -197,29 +187,6 @@ export default function App() {
     propertyState,
   ]);
 
-  const faqs = [
-    {
-      question: "How much cash can I get from my home?",
-      answer:
-        "Your available HELOC amount depends on your home value, your current mortgage balance, occupancy type, credit profile, and product guidelines. This calculator gives you a fast estimate based on those factors.",
-    },
-    {
-      question: "How fast can I get approved and funded?",
-      answer:
-        "Some borrowers may qualify for approval in minutes and funding in as little as 5 business days. Timing depends on state, title, property review, county recording rules, remote online notarization, and underwriting.",
-    },
-    {
-      question: "What are the best ways to use a HELOC?",
-      answer:
-        "Many borrowers use a HELOC for home improvements, debt consolidation, real estate investing, business liquidity, and major planned expenses. We generally do not recommend using a HELOC for a car or vacation.",
-    },
-    {
-      question: "Will checking my options hurt my credit?",
-      answer:
-        "Checking your options may involve a soft credit pull that does not affect your score. If you move forward and complete a full application, a hard credit inquiry may be required.",
-    },
-  ];
-
   function nextStep() {
     if (step === 1 && !canContinueStep1) return;
     if (step === 2 && !canContinueStep2) return;
@@ -248,6 +215,7 @@ export default function App() {
               <a href="#benefits">Benefits</a>
               <a href="#uses">Uses</a>
               <a href="#faq">FAQ</a>
+              <a href={GUIDES[0].path}>Guides</a>
             </div>
 
             <a className="nav-cta" href={PREAPPROVAL_LINK}>
@@ -660,22 +628,13 @@ export default function App() {
               </div>
 
               <div className="lead-form-card">
-                <div className="mini-form">
-                  <div className="mini-form-row">
-                    <input type="text" placeholder="Full Name" />
-                    <input type="email" placeholder="Email Address" />
-                  </div>
-                  <div className="mini-form-row">
-                    <input type="tel" placeholder="Phone Number" />
-                    <input type="text" placeholder="Property State" />
-                  </div>
-                  <a className="primary-cta full-width" href={PREAPPROVAL_LINK}>
-                    Check My HELOC Options
-                  </a>
-                  <p className="mini-form-note">
-                    Start with a quick review and see what you may qualify for.
-                  </p>
-                </div>
+                <LeadForm
+                  estimate={
+                    parsedHomeValue > 0 && creditRange
+                      ? { ...resultSummary, creditRange }
+                      : null
+                  }
+                />
               </div>
             </div>
           </div>
@@ -693,7 +652,7 @@ export default function App() {
             </div>
 
             <div className="faq-list">
-              {faqs.map((faq, index) => (
+              {FAQS.map((faq, index) => (
                 <FAQItem
                   key={faq.question}
                   question={faq.question}
@@ -725,108 +684,7 @@ export default function App() {
         </section>
       </main>
 
-      <footer className="site-footer" id="footer">
-        <div className="container footer-grid">
-          <div className="footer-column footer-brand-column">
-            <h3>Unlock My Equity USA</h3>
-            <div className="footer-license-list">
-              <div>NEXA Mortgage</div>
-              <div>Corporate NMLS #1660690</div>
-              <div>Andres Aviles NMLS #2640511</div>
-              <div>NEXA Mortgage Equal Housing Lender</div>
-            </div>
-
-            <p className="footer-disclaimer">
-              Unlock My Equity USA helps homeowners explore mortgage and home equity
-              options through NEXA Mortgage. This website is intended for informational
-              and advertising purposes only.
-            </p>
-          </div>
-
-          <div className="footer-column">
-            <h4>Legal</h4>
-            <div className="footer-links">
-              <a href={PRIVACY_POLICY_LINK} target="_blank" rel="noreferrer">
-                Privacy Policy
-              </a>
-              <a href={TERMS_OF_SERVICE_LINK} target="_blank" rel="noreferrer">
-                Terms of Use
-              </a>
-              <a
-                href={NMLS_CONSUMER_ACCESS_LINK}
-                target="_blank"
-                rel="noreferrer"
-              >
-                NMLS Consumer Access
-              </a>
-              <a href={TEXAS_NOTICE_LINK} target="_blank" rel="noreferrer">
-                Texas Complaint &amp; Recovery Fund Notice
-              </a>
-            </div>
-          </div>
-
-          <div className="footer-column">
-            <h4>Licensing</h4>
-            <div className="footer-license-list">
-              <div>NEXA Mortgage</div>
-              <div>Corporate NMLS: #1660690</div>
-              <div>Andres Aviles NMLS: #2640511</div>
-              <div>5559 S Sossaman Rd Bldg #1 Ste #101</div>
-              <div>Mesa AZ 85212</div>
-            </div>
-          </div>
-        </div>
-
-        <div className="container footer-disclosure-block">
-          <p>
-            This site is not authorized by the New York State Department of Financial
-            Services. No mortgage loan applications for properties located in the State
-            of New York will be accepted through this site.
-          </p>
-          <p>
-            A AXEN HELOC is secured with your home as collateral, whereas personal loans
-            and credit cards are not.
-          </p>
-          <p>
-            To check the rates and terms you qualify for, we will conduct a soft credit
-            pull that will not affect your credit score. However, if you continue and
-            submit an application, we will request your full credit report from one or
-            more consumer reporting agencies, which is considered a hard credit pull and
-            may affect your credit.
-          </p>
-          <p>
-            Approval may be granted in five minutes but is ultimately subject to
-            verification of income and employment, as well as verification that your
-            property is in at least average condition with a property condition report.
-            Five business day funding timeline assumes closing the loan with our remote
-            online notary. Funding timelines may be longer for loans secured by
-            properties located in counties that do not permit recording of e-signatures
-            or that otherwise require an in-person closing, or that require a waiting
-            period prior to closing.
-          </p>
-          <p>
-            The AXEN Home Equity Line is an open-end product where the full loan amount
-            (minus the origination fee) will be 100% drawn at the time of origination.
-            The initial amount funded at origination will be based on a fixed rate;
-            however, this product contains an additional draw feature. As the borrower
-            repays the balance on the line, the borrower may make additional draws during
-            the draw period. If the borrower elects to make an additional draw, the
-            interest rate for that draw will be set as of the date of the draw and will
-            be based on an Index, which is the Prime Rate published in the Wall Street
-            Journal for the calendar month preceding the date of the additional draw,
-            plus a fixed margin. Accordingly, the fixed rate for any additional draw may
-            be higher than the fixed rate for the initial draw.
-          </p>
-        </div>
-
-        <div className="container footer-bottom">
-          <div>© {new Date().getFullYear()} Unlock My Equity USA. All rights reserved.</div>
-        </div>
-      </footer>
-
-      <a href={PREAPPROVAL_LINK} className="mobile-sticky-cta">
-        Get My HELOC Options
-      </a>
+      <Footer />
     </div>
   );
 }
