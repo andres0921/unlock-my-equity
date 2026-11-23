@@ -1,20 +1,60 @@
+import { useEffect, useState } from "react";
 import {
   GUIDES,
   NMLS_CONSUMER_ACCESS_LINK,
+  PHONE,
   PREAPPROVAL_LINK,
   PRIVACY_POLICY_LINK,
   SITE_NAME,
   TERMS_OF_SERVICE_LINK,
   TEXAS_NOTICE_LINK,
 } from "./site";
+import { Icon } from "./ui";
 
-export function Footer() {
+/**
+ * Mobile-only sticky CTA. It scrolls to the calculator and hides itself while
+ * the hero CTA, the calculator, the lead form, or the footer disclosures are
+ * on screen, so it never covers a field or legal text.
+ */
+function StickyCta({ home }) {
+  const [hidden, setHidden] = useState(true);
+
+  useEffect(() => {
+    if (typeof IntersectionObserver === "undefined") return;
+    const targets = [".hero-ctas", "#calculator", "#next-step", ".site-footer"]
+      .map((s) => document.querySelector(s))
+      .filter(Boolean);
+    const visible = new Set();
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) visible.add(e.target);
+        else visible.delete(e.target);
+      }
+      setHidden(visible.size > 0);
+    });
+    targets.forEach((t) => io.observe(t));
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div className={`sticky-cta ${hidden ? "is-hidden" : ""}`}>
+      <a className="btn btn-primary btn-lg" href={home ? "#calculator" : "/#calculator"}>
+        Estimate my HELOC
+      </a>
+      <a className="sticky-call" href={PHONE.href} aria-label={`Call or text ${PHONE.display}`}>
+        <Icon name="phone" size={20} />
+      </a>
+    </div>
+  );
+}
+
+export function Footer({ home = false }) {
   return (
     <>
       <footer className="site-footer" id="footer">
         <div className="container footer-grid">
           <div className="footer-column footer-brand-column">
-            <h3>{SITE_NAME}</h3>
+            <h2 className="footer-title">{SITE_NAME}</h2>
             <div className="footer-license-list">
               <div>NEXA Mortgage</div>
               <div>Corporate NMLS #1660690</div>
@@ -30,7 +70,7 @@ export function Footer() {
           </div>
 
           <div className="footer-column">
-            <h4>Guides</h4>
+            <h3>Guides</h3>
             <div className="footer-links">
               <a href="/#calculator">HELOC Calculator</a>
               {GUIDES.map((g) => (
@@ -38,9 +78,10 @@ export function Footer() {
                   {g.label}
                 </a>
               ))}
+              <a href={PREAPPROVAL_LINK}>Get Pre-Approved</a>
             </div>
 
-            <h4 className="footer-subhead">Legal</h4>
+            <h3 className="footer-subhead">Legal</h3>
             <div className="footer-links">
               <a href={PRIVACY_POLICY_LINK} target="_blank" rel="noreferrer">
                 Privacy Policy
@@ -58,7 +99,7 @@ export function Footer() {
           </div>
 
           <div className="footer-column">
-            <h4>Licensing</h4>
+            <h3>Licensing</h3>
             <div className="footer-license-list">
               <div>NEXA Mortgage</div>
               <div>Corporate NMLS: #1660690</div>
@@ -66,6 +107,10 @@ export function Footer() {
               <div>5559 S Sossaman Rd Bldg #1 Ste #101</div>
               <div>Mesa AZ 85212</div>
             </div>
+            <a className="footer-phone" href={PHONE.href}>
+              <Icon name="phone" size={16} />
+              {PHONE.display}
+            </a>
           </div>
         </div>
 
@@ -113,12 +158,14 @@ export function Footer() {
 
         <div className="container footer-bottom">
           <div>© {new Date().getFullYear()} Unlock My Equity USA. All rights reserved.</div>
+          <div className="eho">
+            <Icon name="home" size={18} />
+            Equal Housing Opportunity
+          </div>
         </div>
       </footer>
 
-      <a href={PREAPPROVAL_LINK} className="mobile-sticky-cta">
-        Get My HELOC Options
-      </a>
+      <StickyCta home={home} />
     </>
   );
 }
