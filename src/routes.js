@@ -74,9 +74,9 @@ export const routes = [
     file: "index.html",
     title: "HELOC Calculator: See How Much Equity You Can Unlock | Unlock My Equity USA",
     description:
-      "Estimate how much cash you could access with a HELOC while keeping your low first mortgage. Fast approvals, funding in as little as 5 business days in some scenarios. Talk with Andres Aviles, NMLS #2640511.",
+      "Estimate how much cash you could access with a HELOC while keeping your low first mortgage. Talk with Andres Aviles, NMLS #2640511.",
     ogDescription:
-      "Estimate your HELOC in under a minute and access your home equity without refinancing your first mortgage.",
+      "Estimate your HELOC in 3 quick steps and access your home equity without refinancing your first mortgage.",
     Component: App,
     jsonLd: [organization, faqPage(FAQS)],
   },

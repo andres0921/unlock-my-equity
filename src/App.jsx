@@ -4,7 +4,6 @@ import {
   INELIGIBLE_STATES,
   PHONE,
   PREAPPROVAL_LINK,
-  QUICK_TURN_STATES,
   STATES,
 } from "./site";
 import { Footer } from "./Footer";
@@ -55,20 +54,11 @@ function getEligibilityMessage(stateName) {
   return `Properties in ${stateName} may qualify, subject to product guidelines, underwriting, and state requirements.`;
 }
 
-function getFastFundingMessage(stateName) {
-  if (!stateName) {
-    return "Some borrowers may qualify for funding in as little as 5 business days without an appraisal, depending on property, state, remote online notarization availability, and final underwriting.";
+function getTimingMessage(stateName) {
+  if (stateName && INELIGIBLE_STATES.includes(stateName)) {
+    return `${stateName} properties are not eligible through this site.`;
   }
-
-  if (INELIGIBLE_STATES.includes(stateName)) {
-    return `${stateName} properties are not eligible through this site, so fast-funding options are not available here.`;
-  }
-
-  if (QUICK_TURN_STATES.includes(stateName)) {
-    return `Properties in ${stateName} may qualify for funding in as little as 5 business days without an appraisal in some scenarios, depending on property review, county recording rules, remote online notarization eligibility, and underwriting.`;
-  }
-
-  return `Funding timelines in ${stateName} can vary based on state requirements, county recording rules, property type, title, and underwriting. Some files may still move quickly, but additional steps may be required.`;
+  return "Funding timelines vary by state, property review, county recording rules, remote online notarization availability and final underwriting.";
 }
 
 const CALC_STEPS = ["Your home", "Your profile", "Your estimate"];
@@ -155,7 +145,7 @@ export default function App() {
       propertyTypeLabel:
         occupancyType === "owner" ? "Primary Residence" : "Investment Property",
       creditMessage: getCreditMessage(creditRange),
-      fastFundingMessage: getFastFundingMessage(propertyState),
+      timingMessage: getTimingMessage(propertyState),
       eligibilityMessage: getEligibilityMessage(propertyState),
     };
   }, [
@@ -282,14 +272,9 @@ export default function App() {
               </li>
               <li>
                 <Icon name="check" size={18} />
-                Funding in as little as 5 business days in some scenarios*
+                Talk with a licensed loan officer
               </li>
             </ul>
-            <p className="hero-footnote">
-              *Fast-close and no-appraisal options depend on state, property type, title,
-              county recording rules, valuation eligibility, remote online notarization
-              availability, and final underwriting review.
-            </p>
           </div>
         </section>
 
@@ -581,7 +566,7 @@ export default function App() {
                   <details className="calc-more">
                     <summary>Funding timing and credit notes</summary>
                     <p>
-                      <strong>Fast funding note:</strong> {resultSummary.fastFundingMessage}
+                      <strong>Timing note:</strong> {resultSummary.timingMessage}
                     </p>
                     <p>
                       <strong>Credit insight:</strong> {resultSummary.creditMessage}

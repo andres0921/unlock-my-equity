@@ -10,6 +10,7 @@ import {
 import { Icon } from "./ui";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const STATE_ERROR = "Please select the property's state.";
 const FIELDS = ["name", "email", "phone", "state", "company"];
 
 function readFields(formEl) {
@@ -73,6 +74,9 @@ export function LeadForm({
   const step2HeadingRef = useRef(null);
   // Set once the visitor has moved between steps; enables focus moves and the fade.
   const [moved, setMoved] = useState(false);
+  // Where focus lands after a step change: the step heading, or the state
+  // select when Submit sends the visitor back to fix a missing state.
+  const focusStateRef = useRef(false);
   const uid = useId();
   const id = (k) => `${uid}-${k}`;
   const Heading = `h${headingLevel}`;
@@ -84,6 +88,9 @@ export function LeadForm({
     else setForm((f) => ({ ...f, state: value }));
   };
   const stateIneligible = INELIGIBLE_STATES.includes(stateValue);
+  // The state error only shows while no state is chosen, so picking one here
+  // or in the calculator (shared state) clears it and its aria-invalid.
+  const stateError = stateValue ? "" : errors.state;
   const hasEstimate = Boolean(estimate?.estimatedLine);
 
   const update = (key) => (e) => {
@@ -111,7 +118,13 @@ export function LeadForm({
 
   // Move focus to the new step's heading after Continue / Back.
   useEffect(() => {
-    if (moved) (step === 1 ? step1HeadingRef : step2HeadingRef).current?.focus();
+    if (step === 1 && focusStateRef.current) {
+      focusStateRef.current = false;
+      stateRef.current?.focus();
+      return;
+    }
+    if (!moved) return;
+    (step === 1 ? step1HeadingRef : step2HeadingRef).current?.focus();
   }, [moved, step, focusTick]);
 
   // Move focus to the confirmation so keyboard and screen reader users land on it.
@@ -119,7 +132,8 @@ export function LeadForm({
     if (status === "sent" || status === "fallback") doneRef.current?.focus();
   }, [status]);
 
-  function goTo(n) {
+  function goTo(n, { focusState = false } = {}) {
+    focusStateRef.current = focusState;
     setMoved(true);
     setStep(n);
     setFocusTick((t) => t + 1);
@@ -138,11 +152,24 @@ export function LeadForm({
 
   function onStateSelect(e) {
     setStateValue(e.target.value);
+    if (e.target.value && errors.state) setErrors((er) => ({ ...er, state: "" }));
   }
 
-  // Property state is optional, as on main: Continue always advances.
+  // The state shared with the calculator, or whatever the select shows.
+  const currentState = () => stateValue || stateRef.current?.value || "";
+
+  // Property state is required. NY/MA can still continue (with the notice).
   function onContinue() {
     if (!ready) return;
+    const chosen = currentState();
+    if (!chosen) {
+      setErrors({ state: STATE_ERROR });
+      // Focus after commit, once the error and aria-describedby are rendered.
+      focusStateRef.current = true;
+      setFocusTick((t) => t + 1);
+      return;
+    }
+    if (chosen !== stateValue) setStateValue(chosen);
     setErrors({});
     goTo(2);
   }
@@ -155,8 +182,15 @@ export function LeadForm({
     }
     // What's on screen is the source of truth.
     const values = mergeTyped(form, readFields(e.currentTarget));
+    // The state is the one shown in the select and the recap (shared with the
+    // calculator), never a stale copy from an earlier attempt.
+    values.state = stateValue;
     setForm(values);
-    values.state = stateValue || values.state;
+    if (!values.state) {
+      setErrors({ state: STATE_ERROR });
+      goTo(1, { focusState: true });
+      return;
+    }
     const next = {};
     if (!values.name.trim()) next.name = "Enter your full name.";
     if (!EMAIL_RE.test(values.email.trim())) {
@@ -277,10 +311,19 @@ export function LeadForm({
           Where is the home you'd borrow against?
         </Heading>
 
-        <div className="field">
+        <div className={`field ${stateError ? "has-error" : ""}`}>
           <label htmlFor={id("state")}>
-            Property state <span className="opt">Optional</span>
+            Property state <span className="opt">Required</span>
           </label>
+          {/* Persistent polite live region so the error is announced when it appears. */}
+          <div className="field-error-slot" aria-live="polite">
+            {stateError ? (
+              <span className="field-error" id={id("state-error")}>
+                <Icon name="alert" size={16} />
+                {stateError}
+              </span>
+            ) : null}
+          </div>
           <div className="select-wrap">
             <select
               id={id("state")}
@@ -289,6 +332,9 @@ export function LeadForm({
               autoComplete="address-level1"
               value={stateValue}
               onChange={onStateSelect}
+              required
+              aria-invalid={stateError ? true : undefined}
+              aria-describedby={stateError ? id("state-error") : undefined}
             >
               <option value="">Select a state</option>
               {STATES.map((s) => (
@@ -425,6 +471,10 @@ export function LeadForm({
           >
             {status === "sending" ? "Sending..." : "Talk Through My Options"}
           </button>
+          <p className="secure-note">
+            <Icon name="lock" size={16} />
+            Your information is sent securely.
+          </p>
           <p className="form-note consent" id={id("consent")}>
             By submitting, you agree that Andres Aviles (NEXA Mortgage, NMLS #2640511) may
             contact you by phone, text, or email about your request, including by automated

@@ -38,7 +38,7 @@ export const FAQS = [
   {
     question: "How fast can I get approved and funded?",
     answer:
-      "Some borrowers may qualify for approval in minutes and funding in as little as 5 business days. Timing depends on state, title, property review, county recording rules, remote online notarization, and underwriting.",
+      "Timing varies. It depends on your state, title, property review, county recording rules, whether remote online notarization is available, and underwriting. Andres can walk you through what to expect for your property.",
   },
   {
     question: "What are the best ways to use a HELOC?",
@@ -104,20 +104,6 @@ export const STATES = [
   "West Virginia",
   "Wisconsin",
   "Wyoming",
-];
-
-// States where fast (about 5 business day) funding may be possible.
-export const QUICK_TURN_STATES = [
-  "Arizona",
-  "California",
-  "Colorado",
-  "Florida",
-  "Idaho",
-  "Nevada",
-  "Oregon",
-  "Texas",
-  "Utah",
-  "Washington",
 ];
 
 // Properties in these states are not eligible through this site.

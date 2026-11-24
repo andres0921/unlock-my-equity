@@ -432,14 +432,6 @@ select {
   color: var(--teal);
 }
 
-.hero-footnote {
-  max-width: 640px;
-  margin: 16px auto 0;
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--slate);
-}
-
 /* ---------------- Lead form (stepped) ---------------- */
 
 /* Labeled two-step indicator: a bar over each label, filled when reached.
@@ -563,7 +555,8 @@ select {
 
 /* Errors sit between the label and the field, outside the <label>, so screen
    readers hear them once (via aria-describedby) instead of twice. */
-.field > .field-error {
+.field > .field-error,
+.field-error-slot > .field-error {
   display: flex;
   margin: -2px 0 6px;
 }
@@ -753,6 +746,23 @@ select:focus-visible {
 
 .submit-row {
   margin-top: 4px;
+}
+
+/* Compact trust line under the submit button. */
+.secure-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--slate); /* #506577 */
+}
+
+.secure-note .icon {
+  flex: none;
+  color: var(--teal); /* #234F64 */
 }
 
 .form-note {
