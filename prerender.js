@@ -25,10 +25,10 @@ function head(route) {
   const url = route.path === "/" ? `${SITE_URL}/` : `${SITE_URL}${route.path}`;
   const ogDesc = route.ogDescription ?? route.description;
   const og = route.ogImage ?? {
-    src: "/images/c4-elevation-1024.webp",
+    src: "/images/c4p-entrance-1024.webp",
     width: 1024,
     height: 1024,
-    alt: "Colored-pencil elevation drawing of a house with a yellow front door on grid paper",
+    alt: "A slate-blue front door set in a pale stone entrance with low plantings",
   };
   const image = `${SITE_URL}${og.src}`;
   const tags = [

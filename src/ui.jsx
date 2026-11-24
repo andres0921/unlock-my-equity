@@ -101,8 +101,8 @@ export function Icon({ name, size = 20, className = "" }) {
 }
 
 /**
- * Colored-pencil illustration from /public/images. Every file ships at 480, 768
- * and 1024px wide. The house elevation is 1:1; the floor plan and samples are 4:3.
+ * Architectural photo from /public/images. Every file ships at 480, 768 and
+ * 1024px wide. Square accents (entrance, window) are 1:1; scenes are 4:3.
  * Width/height are always set so the browser reserves space (no layout shift).
  */
 export function Illo({ name, alt = "", sizes, square = false, eager = false, className }) {
@@ -122,7 +122,7 @@ export function Illo({ name, alt = "", sizes, square = false, eager = false, cla
   );
 }
 
-/* Small blueprint-house mark (grid tile, violet outline, yellow door) drawn in code. */
+/* Small house mark drawn in code for the header wordmark. */
 function BrandMark() {
   return (
     <svg
@@ -133,11 +133,10 @@ function BrandMark() {
       aria-hidden="true"
       focusable="false"
     >
-      <rect x="1" y="1" width="38" height="38" rx="12" fill="#F3EFFF" stroke="#AAA2E3" strokeWidth="1.5" />
-      <path d="M1 14h38M1 27h38M14 1v38M27 1v38" stroke="#AAA2E3" strokeOpacity="0.45" strokeWidth="1" />
-      <path d="M9 20.5L20 11l11 9.5" fill="none" stroke="#51408D" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M12.5 19v11h15V19" fill="#AAA2E3" fillOpacity="0.55" stroke="#51408D" strokeWidth="2" strokeLinejoin="round" />
-      <rect x="17.8" y="22.5" width="4.6" height="7.5" rx="2.3" fill="#F7DB84" stroke="#51408D" strokeWidth="1.2" />
+      <rect width="40" height="40" rx="10" fill="#234F64" />
+      <path d="M10 20.5L20 12l10 8.5" fill="none" stroke="#FFFFFF" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M13.5 19v10h13V19" fill="none" stroke="#FFFFFF" strokeWidth="2.6" strokeLinejoin="round" />
+      <path d="M18.5 29v-5h3v5" fill="none" stroke="#FFFFFF" strokeWidth="2.2" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -160,9 +159,7 @@ export function SiteHeader({ home = false, current }) {
 
         <nav className="header-nav" aria-label="Main">
           <a href={`${base}#calculator`}>Calculator</a>
-          <a className="nav-extra" href={`${base}#how-it-works`}>
-            How it works
-          </a>
+          <a href={`${base}#how-it-works`}>How it works</a>
           {GUIDES.map((g) => (
             <a
               key={g.path}
@@ -172,9 +169,7 @@ export function SiteHeader({ home = false, current }) {
               {g.label}
             </a>
           ))}
-          <a className="nav-extra" href={`${base}#faq`}>
-            FAQ
-          </a>
+          <a href={`${base}#faq`}>FAQ</a>
         </nav>
 
         <a className="header-phone" href={PHONE.href} aria-label={`Call or text ${PHONE.display}`}>

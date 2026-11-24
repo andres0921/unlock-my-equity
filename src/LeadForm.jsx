@@ -254,8 +254,13 @@ export function LeadForm({
       <ol className="step-strip" aria-label="Request steps">
         {["Property", "Contact"].map((label, i) => {
           const current = step === i + 1;
+          const done = step > i + 1;
           return (
-            <li key={label} aria-current={current ? "step" : undefined}>
+            <li
+              key={label}
+              className={done ? "is-done" : undefined}
+              aria-current={current ? "step" : undefined}
+            >
               <span className="step-strip-num" aria-hidden="true">
                 {i + 1}
               </span>
@@ -267,7 +272,7 @@ export function LeadForm({
 
       {/* ---------- Step 1: the property ---------- */}
       <div className="lead-step" hidden={step !== 1}>
-        <p className="sr-only">Step 1 of 2</p>
+        <p className="step-count">Step 1 of 2</p>
         <Heading ref={step1HeadingRef} tabIndex={-1} className="step-title">
           Where is the home you'd borrow against?
         </Heading>
@@ -324,7 +329,7 @@ export function LeadForm({
 
       {/* ---------- Step 2: contact details ---------- */}
       <div className="lead-step" hidden={step !== 2}>
-        <p className="sr-only">Step 2 of 2</p>
+        <p className="step-count">Step 2 of 2</p>
         <Heading ref={step2HeadingRef} tabIndex={-1} className="step-title">
           Where should Andres reach you?
         </Heading>

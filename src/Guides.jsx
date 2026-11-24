@@ -59,7 +59,7 @@ function GuideLayout({ eyebrow, title, intro, children, sources, current, art })
                 name={art.name}
                 alt={art.alt}
                 eager
-                sizes="(min-width: 1200px) 503px, (min-width: 900px) calc((100vw - 120px) / 2.15), (min-width: 640px) calc(100vw - 48px), calc(100vw - 32px)"
+                sizes="(min-width: 1264px) 503px, (min-width: 900px) calc(46.5vw - 56px), (min-width: 640px) calc(100vw - 48px), calc(100vw - 32px)"
               />
             </div>
           </div>
@@ -69,7 +69,7 @@ function GuideLayout({ eyebrow, title, intro, children, sources, current, art })
           {children}
         </article>
 
-        <section className="band band-periwinkle" aria-labelledby="guide-lead-title">
+        <section className="band band-peach" aria-labelledby="guide-lead-title">
           <div className="container narrow">
             <div className="section-head">
               <p className="eyebrow">Take the next step</p>
@@ -115,8 +115,8 @@ export function HowAHelocWorks() {
     <GuideLayout
       current="/how-a-heloc-works"
       art={{
-        name: "c4-samples",
-        alt: "Colored-pencil drawing on grid paper of flooring, tile, and cabinet samples pulled apart in an exploded view.",
+        name: "c4p-porch",
+        alt: "A shaded front porch with simple white columns, a wooden bench, and stone steps.",
       }}
       eyebrow="HELOC basics"
       title="How a HELOC works, in plain English"
@@ -237,8 +237,8 @@ export function HelocVsCashOut() {
     <GuideLayout
       current="/heloc-vs-cash-out-refinance"
       art={{
-        name: "c4-floorplan",
-        alt: "Colored-pencil drawing on grid paper of a folded floor plan with a ruler and a pencil.",
+        name: "c4p-office",
+        alt: "A quiet home office nook with a wooden desk, a table lamp, and a slate-blue wall.",
       }}
       eyebrow="Compare your options"
       title="HELOC vs. cash-out refinance: which fits you?"

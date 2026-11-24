@@ -241,15 +241,16 @@ export default function App() {
         <section className="hero" aria-labelledby="hero-title">
           {/* Desktop-only accents: hidden (and, being lazy, never fetched) on phones. */}
           <Illo
-            name="c4-elevation"
+            name="c4p-entrance"
             square
-            className="hero-art hero-art-house"
-            sizes="300px"
+            className="hero-art hero-art-left"
+            sizes="(min-width: 1200px) 260px, calc(50vw - 340px)"
           />
           <Illo
-            name="c4-samples"
-            className="hero-art hero-art-swatches"
-            sizes="280px"
+            name="c4p-window"
+            square
+            className="hero-art hero-art-right"
+            sizes="(min-width: 1160px) 240px, calc(50vw - 340px)"
           />
 
           <div className="container hero-inner">
@@ -292,9 +293,9 @@ export default function App() {
           </div>
         </section>
 
-        {/* ---------------- Calculator (periwinkle band) ---------------- */}
+        {/* ---------------- Calculator (stone band) ---------------- */}
         <section
-          className="band band-periwinkle"
+          className="band band-peach"
           id="calculator"
           tabIndex={-1}
           aria-labelledby="calc-title"
@@ -655,8 +656,8 @@ export default function App() {
           </div>
         </section>
 
-        {/* ---------------- Ways to use equity (gridded white band) ---------------- */}
-        <section className="band band-paper" id="uses" aria-labelledby="uses-title">
+        {/* ---------------- Ways to use equity (sky band) ---------------- */}
+        <section className="band band-sky" id="uses" aria-labelledby="uses-title">
           {/* id="benefits" keeps old /#benefits campaign links working. */}
           <div className="container" id="benefits">
             <div className="section-head">
@@ -690,7 +691,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* ---------------- Illustrated guides ---------------- */}
+        {/* ---------------- Guides ---------------- */}
         <section className="band" id="guides" aria-labelledby="guides-title">
           <div className="container">
             <div className="section-head">
@@ -702,9 +703,9 @@ export default function App() {
               <article className="guide-row">
                 <div className="guide-row-art">
                   <Illo
-                    name="c4-samples"
-                    alt="Colored-pencil drawing on grid paper of flooring, tile, and cabinet samples pulled apart in an exploded view."
-                    sizes="(min-width: 900px) 540px, calc(100vw - 32px)"
+                    name="c4p-porch"
+                    alt="A shaded front porch with simple white columns, a wooden bench, and stone steps."
+                    sizes="(min-width: 1144px) 537px, (min-width: 900px) calc(52.4vw - 63px), (min-width: 640px) calc(100vw - 48px), calc(100vw - 32px)"
                   />
                 </div>
                 <div className="guide-row-copy">
@@ -725,9 +726,9 @@ export default function App() {
               <article className="guide-row is-flipped" id="borrow-better">
                 <div className="guide-row-art">
                   <Illo
-                    name="c4-floorplan"
-                    alt="Colored-pencil drawing on grid paper of a folded floor plan with a ruler and a pencil."
-                    sizes="(min-width: 900px) 540px, calc(100vw - 32px)"
+                    name="c4p-office"
+                    alt="A quiet home office nook with a wooden desk, a table lamp, and a slate-blue wall."
+                    sizes="(min-width: 1144px) 488px, (min-width: 900px) calc(47.6vw - 57px), (min-width: 640px) calc(100vw - 48px), calc(100vw - 32px)"
                   />
                 </div>
                 <div className="guide-row-copy">
@@ -749,7 +750,7 @@ export default function App() {
         </section>
 
         {/* ---------------- FAQ ---------------- */}
-        <section className="band band-lavender" id="faq" aria-labelledby="faq-title">
+        <section className="band band-soft" id="faq" aria-labelledby="faq-title">
           <div className="container narrow">
             <div className="section-head">
               <p className="eyebrow">Frequently asked questions</p>
