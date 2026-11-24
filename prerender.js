@@ -24,7 +24,13 @@ const esc = (s) =>
 function head(route) {
   const url = route.path === "/" ? `${SITE_URL}/` : `${SITE_URL}${route.path}`;
   const ogDesc = route.ogDescription ?? route.description;
-  const image = `${SITE_URL}/logo.png`;
+  const og = route.ogImage ?? {
+    src: "/images/c4p-entrance-1024.webp",
+    width: 1024,
+    height: 1024,
+    alt: "A slate-blue front door set in a pale stone entrance with low plantings",
+  };
+  const image = `${SITE_URL}${og.src}`;
   const tags = [
     `<title>${esc(route.title)}</title>`,
     `<meta name="description" content="${esc(route.description)}" />`,
@@ -35,12 +41,15 @@ function head(route) {
     `<meta property="og:title" content="${esc(route.title)}" />`,
     `<meta property="og:description" content="${esc(ogDesc)}" />`,
     `<meta property="og:image" content="${image}" />`,
-    `<meta property="og:image:alt" content="Unlock My Equity USA" />`,
+    `<meta property="og:image:width" content="${og.width}" />`,
+    `<meta property="og:image:height" content="${og.height}" />`,
+    `<meta property="og:image:alt" content="${esc(og.alt)}" />`,
     `<meta property="og:locale" content="en_US" />`,
-    `<meta name="twitter:card" content="summary" />`,
+    `<meta name="twitter:card" content="summary_large_image" />`,
     `<meta name="twitter:title" content="${esc(route.title)}" />`,
     `<meta name="twitter:description" content="${esc(ogDesc)}" />`,
     `<meta name="twitter:image" content="${image}" />`,
+    `<meta name="twitter:image:alt" content="${esc(og.alt)}" />`,
     ...(route.jsonLd ?? []).map(
       (d) =>
         `<script type="application/ld+json">${JSON.stringify(d).replace(/</g, "\\u003c")}</script>`

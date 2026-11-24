@@ -1,6 +1,7 @@
 import { Footer } from "./Footer";
 import { LeadForm } from "./LeadForm";
-import { GUIDES, PREAPPROVAL_LINK } from "./site";
+import { GUIDES } from "./site";
+import { Icon, Illo, SiteHeader, StickyCta } from "./ui";
 import { HOW_HELOC_FAQS, VS_REFI_FAQS } from "./guideFaqs";
 
 const SOURCES = {
@@ -18,65 +19,75 @@ const SOURCES = {
   },
 };
 
-function GuideLayout({ eyebrow, title, intro, children, sources, current }) {
+function GuideLayout({ eyebrow, title, intro, children, sources, current, art }) {
   return (
-    <div className="site-shell">
-      <header className="hero guide-hero" id="top">
-        <div className="container">
-          <nav className="nav">
-            <a href="/" className="brand brand-link">
-              <img src="/logo.png" alt="Unlock My Equity USA" className="brand-logo" />
-            </a>
-            <div className="nav-links">
-              <a href="/#calculator">Calculator</a>
-              {GUIDES.map((g) => (
-                <a
-                  key={g.path}
-                  href={g.path}
-                  aria-current={g.path === current ? "page" : undefined}
-                >
-                  {g.label}
-                </a>
-              ))}
-              <a href="/#faq">FAQ</a>
-            </div>
-            <a className="nav-cta" href={PREAPPROVAL_LINK}>
-              Get Pre-Approved
-            </a>
-          </nav>
-
-          <div className="guide-heading">
-            <div className="eyebrow">{eyebrow}</div>
-            <h1>{title}</h1>
-            <p className="hero-text">{intro}</p>
-          </div>
-        </div>
-      </header>
+    <div className="site-shell" id="top">
+      <a className="skip-link" href="#article">
+        Skip to the guide
+      </a>
+      <SiteHeader current={current} />
 
       <main>
-        <article className="container guide-body">{children}</article>
-
-        <section className="lead-section" id="next-step">
-          <div className="container">
-            <div className="lead-box">
-              <div className="lead-copy">
-                <div className="eyebrow">Take the next step</div>
-                <h2>Want to see what your numbers look like?</h2>
-                <p>
-                  Run the <a href="/#calculator">HELOC calculator</a> for a quick
-                  estimate, or send me your details and we'll take a step back and look
-                  at your options together. No pressure at all.
-                </p>
+        <section className="guide-hero" aria-labelledby="guide-title">
+          <div className="container guide-hero-inner">
+            <div className="guide-hero-copy">
+              <nav className="crumbs" aria-label="Breadcrumb">
+                <ol>
+                  <li>
+                    <a href="/">Home</a>
+                  </li>
+                  <li aria-current="page">
+                    {GUIDES.find((g) => g.path === current)?.label}
+                  </li>
+                </ol>
+              </nav>
+              <p className="eyebrow">{eyebrow}</p>
+              <h1 id="guide-title">{title}</h1>
+              <p className="hero-sub">{intro}</p>
+              <div className="guide-hero-ctas">
+                <a className="btn btn-primary btn-lg" href="#next-step">
+                  Start my HELOC request
+                  <Icon name="arrowRight" size={18} />
+                </a>
+                <a className="text-link" href="/#calculator">
+                  Or estimate first
+                </a>
               </div>
-              <div className="lead-form-card">
-                <LeadForm />
-              </div>
+            </div>
+            <div className="guide-hero-art">
+              <Illo
+                name={art.name}
+                alt={art.alt}
+                eager
+                sizes="(min-width: 1264px) 503px, (min-width: 900px) calc(46.5vw - 56px), (min-width: 640px) calc(100vw - 48px), calc(100vw - 32px)"
+              />
             </div>
           </div>
         </section>
 
-        <section className="container guide-sources">
-          <h2>Sources</h2>
+        <article className="container guide-body" id="article">
+          {children}
+        </article>
+
+        <section className="band band-peach" aria-labelledby="guide-lead-title">
+          <div className="container narrow">
+            <div className="section-head">
+              <p className="eyebrow">Take the next step</p>
+              <h2 id="guide-lead-title">Want to see what your numbers look like?</h2>
+              <p>
+                Run the <a href="/#calculator">HELOC calculator</a> for a quick
+                estimate, or send me your details and we'll take a step back and look
+                at your options together. No pressure at all.
+              </p>
+            </div>
+            <div className="form-card" id="next-step" tabIndex={-1}>
+              <LeadForm calculatorHref="/#calculator" headingLevel={3} />
+            </div>
+          </div>
+        </section>
+
+        <section className="container narrow guide-sources" aria-labelledby="sources-title">
+          <h2 id="sources-title">Sources</h2>
           <ul>
             {sources.map((s) => (
               <li key={s.href}>
@@ -94,15 +105,19 @@ function GuideLayout({ eyebrow, title, intro, children, sources, current }) {
       </main>
 
       <Footer />
+      <StickyCta />
     </div>
   );
 }
-
 
 export function HowAHelocWorks() {
   return (
     <GuideLayout
       current="/how-a-heloc-works"
+      art={{
+        name: "c4p-porch",
+        alt: "A shaded front porch with simple white columns, a wooden bench, and stone steps.",
+      }}
       eyebrow="HELOC basics"
       title="How a HELOC works, in plain English"
       intro="A home equity line of credit lets you borrow against the equity you've built, without replacing the mortgage you already have. Here's how it actually works, step by step."
@@ -221,6 +236,10 @@ export function HelocVsCashOut() {
   return (
     <GuideLayout
       current="/heloc-vs-cash-out-refinance"
+      art={{
+        name: "c4p-office",
+        alt: "A quiet home office nook with a wooden desk, a table lamp, and a slate-blue wall.",
+      }}
       eyebrow="Compare your options"
       title="HELOC vs. cash-out refinance: which fits you?"
       intro="Both turn your home equity into cash. The biggest difference is what happens to the mortgage you already have, and that one detail can change the whole math."

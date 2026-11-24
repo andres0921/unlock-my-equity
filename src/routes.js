@@ -64,7 +64,8 @@ const article = (path, headline, description) => ({
 
 /**
  * Every page on the site. Each is pre-rendered at build time to dist/<file>
- * with its own title, description, canonical and schema (see prerender.js),
+ * with its own title, description, canonical, social image and schema (see
+ * prerender.js; routes without `ogImage` use the bungalow illustration),
  * and the browser hydrates the matching component (see main.jsx).
  */
 export const routes = [
@@ -73,9 +74,9 @@ export const routes = [
     file: "index.html",
     title: "HELOC Calculator: See How Much Equity You Can Unlock | Unlock My Equity USA",
     description:
-      "Estimate how much cash you could access with a HELOC while keeping your low first mortgage. Fast approvals, funding in as little as 5 business days in some scenarios. Talk with Andres Aviles, NMLS #2640511.",
+      "Estimate how much cash you could access with a HELOC while keeping your low first mortgage. Talk with Andres Aviles, NMLS #2640511.",
     ogDescription:
-      "Estimate your HELOC in under a minute and access your home equity without refinancing your first mortgage.",
+      "Estimate your HELOC in 3 quick steps and access your home equity without refinancing your first mortgage.",
     Component: App,
     jsonLd: [organization, faqPage(FAQS)],
   },
@@ -86,6 +87,12 @@ export const routes = [
     description:
       "A plain-English guide to home equity lines of credit: how much you can borrow, the draw and repayment periods, how the rate works, what it takes to get approved, and the tax rules.",
     Component: HowAHelocWorks,
+    ogImage: {
+      src: "/images/c4p-porch-1024.webp",
+      width: 1024,
+      height: 768,
+      alt: "A shaded front porch with simple white columns, a wooden bench, and stone steps.",
+    },
     jsonLd: [
       article(
         "/how-a-heloc-works",
@@ -106,6 +113,12 @@ export const routes = [
     description:
       "Compare a HELOC and a cash-out refinance side by side: what happens to your current mortgage and rate, up-front costs, payments, and when each one makes sense.",
     Component: HelocVsCashOut,
+    ogImage: {
+      src: "/images/c4p-office-1024.webp",
+      width: 1024,
+      height: 768,
+      alt: "A quiet home office nook with a wooden desk, a table lamp, and a slate-blue wall.",
+    },
     jsonLd: [
       article(
         "/heloc-vs-cash-out-refinance",

@@ -1,7 +1,16 @@
-import { useEffect, useRef, useState } from "react";
-import { CONTACT_ENDPOINT, PHONE, PREAPPROVAL_LINK } from "./site";
+import { useEffect, useId, useImperativeHandle, useRef, useState } from "react";
+import {
+  CONTACT_ENDPOINT,
+  INELIGIBLE_STATES,
+  NMLS_CONSUMER_ACCESS_LINK,
+  PHONE,
+  PREAPPROVAL_LINK,
+  STATES,
+} from "./site";
+import { Icon } from "./ui";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const STATE_ERROR = "Please select the property's state.";
 const FIELDS = ["name", "email", "phone", "state", "company"];
 
 function readFields(formEl) {
@@ -17,11 +26,30 @@ function mergeTyped(state, typed) {
 }
 
 /**
- * "Take the next step" form. Sends the visitor's details (plus their
- * calculator estimate, if they ran one) to Andres's lead inbox, then offers
- * the pre-approval link. Nothing is sent until they press Submit.
+ * Two-step HELOC request form.
+ *   Step 1: the property state, with "Continue" and an "Estimate first" link.
+ *   Step 2: name, email, phone, then the consent text beside Submit.
+ *
+ * Both steps are always in the DOM (the inactive one is `hidden`), so every
+ * field is part of the same <form> at submit time and answers survive going
+ * back, or leaving for the calculator and returning. Sends the visitor's
+ * details (plus their calculator estimate, if they ran one) to Andres's lead
+ * inbox, then offers the pre-approval link. Nothing is sent until Submit.
+ *
+ * `propertyState` / `onPropertyStateChange` make the property state controlled,
+ * so the home page can share one canonical value between this form and the
+ * calculator (they can never disagree). Without them the form keeps its own.
+ * `ref` exposes `showContact()` so the calculator can bring the visitor back
+ * to the right step with their estimate attached.
  */
-export function LeadForm({ estimate }) {
+export function LeadForm({
+  estimate,
+  propertyState,
+  onPropertyStateChange,
+  calculatorHref = "#calculator",
+  headingLevel = 2,
+  ref,
+}) {
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -29,35 +57,153 @@ export function LeadForm({ estimate }) {
     state: "",
     company: "", // honeypot: real visitors never see or fill this
   });
+  const [step, setStep] = useState(1);
+  const [focusTick, setFocusTick] = useState(0);
   const [status, setStatus] = useState("idle"); // idle | sending | sent | fallback | error
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState({});
+  // The prerendered submit button stays disabled until React has hydrated, so
+  // the browser can never fall back to a native submission.
+  const [ready, setReady] = useState(false);
 
   const formRef = useRef(null);
+  const doneRef = useRef(null);
+  const stateRef = useRef(null);
+  const nameRef = useRef(null);
+  const emailRef = useRef(null);
+  const step1HeadingRef = useRef(null);
+  const step2HeadingRef = useRef(null);
+  // Set once the visitor has moved between steps; enables focus moves and the fade.
+  const [moved, setMoved] = useState(false);
+  // Where focus lands after a step change: the step heading, or the state
+  // select when Submit sends the visitor back to fix a missing state.
+  const focusStateRef = useRef(false);
+  const uid = useId();
+  const id = (k) => `${uid}-${k}`;
+  const Heading = `h${headingLevel}`;
 
-  const update = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
+  const controlled = propertyState !== undefined;
+  const stateValue = controlled ? propertyState : form.state;
+  const setStateValue = (value) => {
+    if (controlled) onPropertyStateChange?.(value);
+    else setForm((f) => ({ ...f, state: value }));
+  };
+  const stateIneligible = INELIGIBLE_STATES.includes(stateValue);
+  // The state error only shows while no state is chosen, so picking one here
+  // or in the calculator (shared state) clears it and its aria-invalid.
+  const stateError = stateValue ? "" : errors.state;
+  const hasEstimate = Boolean(estimate?.estimatedLine);
+
+  const update = (key) => (e) => {
+    const value = e.target.value;
+    setForm((f) => ({ ...f, [key]: value }));
+    if (errors[key]) setErrors((er) => ({ ...er, [key]: "" }));
+  };
 
   // The page is pre-rendered, so a visitor on a slow connection can start
-  // typing before the app loads. Pick up anything already in the fields so it
-  // isn't lost or ignored.
+  // answering before the app loads. Pick up anything already in the fields so
+  // it isn't lost or ignored.
   useEffect(() => {
     const el = formRef.current;
-    if (!el) return;
-    const typed = readFields(el);
-    if (Object.values(typed).some(Boolean)) {
-      setForm((f) => mergeTyped(f, typed));
+    if (el) {
+      const typed = readFields(el);
+      if (Object.values(typed).some(Boolean)) {
+        setForm((f) => mergeTyped(f, typed));
+        if (typed.state && controlled) onPropertyStateChange?.(typed.state);
+      }
     }
+    setReady(true);
+    // Runs once on hydration only; the props it reads are stable for that moment.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Move focus to the new step's heading after Continue / Back.
+  useEffect(() => {
+    if (step === 1 && focusStateRef.current) {
+      focusStateRef.current = false;
+      stateRef.current?.focus();
+      return;
+    }
+    if (!moved) return;
+    (step === 1 ? step1HeadingRef : step2HeadingRef).current?.focus();
+  }, [moved, step, focusTick]);
+
+  // Move focus to the confirmation so keyboard and screen reader users land on it.
+  useEffect(() => {
+    if (status === "sent" || status === "fallback") doneRef.current?.focus();
+  }, [status]);
+
+  function goTo(n, { focusState = false } = {}) {
+    focusStateRef.current = focusState;
+    setMoved(true);
+    setStep(n);
+    setFocusTick((t) => t + 1);
+  }
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      // Jump to contact details if we already know the state, else ask for it.
+      showContact() {
+        goTo(stateValue ? 2 : 1);
+      },
+    }),
+    [stateValue]
+  );
+
+  function onStateSelect(e) {
+    setStateValue(e.target.value);
+    if (e.target.value && errors.state) setErrors((er) => ({ ...er, state: "" }));
+  }
+
+  // The state shared with the calculator, or whatever the select shows.
+  const currentState = () => stateValue || stateRef.current?.value || "";
+
+  // Property state is required. NY/MA can still continue (with the notice).
+  function onContinue() {
+    if (!ready) return;
+    const chosen = currentState();
+    if (!chosen) {
+      setErrors({ state: STATE_ERROR });
+      // Focus after commit, once the error and aria-describedby are rendered.
+      focusStateRef.current = true;
+      setFocusTick((t) => t + 1);
+      return;
+    }
+    if (chosen !== stateValue) setStateValue(chosen);
+    setErrors({});
+    goTo(2);
+  }
 
   async function onSubmit(e) {
     e.preventDefault();
-    setError("");
-    // What's on screen is the source of truth.
-    const values = mergeTyped(form, readFields(e.currentTarget));
-    setForm(values);
-    if (!values.name.trim() || !EMAIL_RE.test(values.email.trim())) {
-      setError("Please add your name and a valid email.");
+    if (step === 1) {
+      onContinue();
       return;
     }
+    // What's on screen is the source of truth.
+    const values = mergeTyped(form, readFields(e.currentTarget));
+    // The state is the one shown in the select and the recap (shared with the
+    // calculator), never a stale copy from an earlier attempt.
+    values.state = stateValue;
+    setForm(values);
+    if (!values.state) {
+      setErrors({ state: STATE_ERROR });
+      goTo(1, { focusState: true });
+      return;
+    }
+    const next = {};
+    if (!values.name.trim()) next.name = "Enter your full name.";
+    if (!EMAIL_RE.test(values.email.trim())) {
+      next.email = values.email.trim()
+        ? "Enter a complete email, like name@example.com."
+        : "Enter your email address.";
+    }
+    if (next.name || next.email) {
+      setErrors(next);
+      (next.name ? nameRef : emailRef).current?.focus();
+      return;
+    }
+    setErrors({});
     setStatus("sending");
 
     const details = [
@@ -97,65 +243,266 @@ export function LeadForm({ estimate }) {
 
   if (status === "sent" || status === "fallback") {
     return (
-      <div className="mini-form form-success" role="status">
-        <h3>Thanks, {form.name.trim().split(" ")[0]}. I've got you.</h3>
+      <div className="lead-form form-success" role="status">
+        <div className="success-badge" aria-hidden="true">
+          <Icon name="check" size={28} />
+        </div>
+        <Heading ref={doneRef} tabIndex={-1} className="step-title">
+          Thanks, {form.name.trim().split(" ")[0]}. I've got you.
+        </Heading>
         <p>
           {status === "sent"
             ? "I'll reach out shortly to talk through your options. No pressure at all."
             : `Your details came through. If you don't hear from me soon, call or text ${PHONE.display}.`}
         </p>
-        <p>Want to see your HELOC options right now?</p>
-        <a className="primary-cta full-width" href={PREAPPROVAL_LINK}>
-          Check My HELOC Options
-        </a>
+        {!stateIneligible && (
+          <>
+            <p>Want to see your HELOC options right now?</p>
+            <a className="btn btn-primary btn-block" href={PREAPPROVAL_LINK}>
+              Check My HELOC Options
+              <Icon name="external" size={18} />
+            </a>
+            <p className="form-note">Opens the lender's site.</p>
+          </>
+        )}
       </div>
     );
   }
 
+  const fieldError = (key) =>
+    errors[key] ? (
+      <span className="field-error" id={id(`${key}-error`)}>
+        <Icon name="alert" size={16} />
+        {errors[key]}
+      </span>
+    ) : null;
+
   return (
-    <form ref={formRef} className="mini-form" onSubmit={onSubmit} noValidate>
-      <div className="mini-form-row">
-        <input
-          type="text"
-          name="name"
-          autoComplete="name"
-          placeholder="Full Name"
-          aria-label="Full name"
-          value={form.name}
-          onChange={update("name")}
-          required
-        />
-        <input
-          type="email"
-          name="email"
-          autoComplete="email"
-          placeholder="Email Address"
-          aria-label="Email address"
-          value={form.email}
-          onChange={update("email")}
-          required
-        />
+    <form
+      ref={formRef}
+      className={`lead-form ${moved ? "has-moved" : ""}`}
+      method="post"
+      onSubmit={onSubmit}
+      noValidate
+    >
+      <ol className="step-strip" aria-label="Request steps">
+        {["Property", "Contact"].map((label, i) => {
+          const current = step === i + 1;
+          const done = step > i + 1;
+          return (
+            <li
+              key={label}
+              className={done ? "is-done" : undefined}
+              aria-current={current ? "step" : undefined}
+            >
+              <span className="step-strip-num" aria-hidden="true">
+                {i + 1}
+              </span>
+              {label}
+            </li>
+          );
+        })}
+      </ol>
+
+      {/* ---------- Step 1: the property ---------- */}
+      <div className="lead-step" hidden={step !== 1}>
+        <p className="step-count">Step 1 of 2</p>
+        <Heading ref={step1HeadingRef} tabIndex={-1} className="step-title">
+          Where is the home you'd borrow against?
+        </Heading>
+
+        <div className={`field ${stateError ? "has-error" : ""}`}>
+          <label htmlFor={id("state")}>
+            Property state <span className="opt">Required</span>
+          </label>
+          {/* Persistent polite live region so the error is announced when it appears. */}
+          <div className="field-error-slot" aria-live="polite">
+            {stateError ? (
+              <span className="field-error" id={id("state-error")}>
+                <Icon name="alert" size={16} />
+                {stateError}
+              </span>
+            ) : null}
+          </div>
+          <div className="select-wrap">
+            <select
+              id={id("state")}
+              ref={stateRef}
+              name="state"
+              autoComplete="address-level1"
+              value={stateValue}
+              onChange={onStateSelect}
+              required
+              aria-invalid={stateError ? true : undefined}
+              aria-describedby={stateError ? id("state-error") : undefined}
+            >
+              <option value="">Select a state</option>
+              {STATES.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div aria-live="polite">
+          {stateIneligible && (
+            <p className="notice notice-warn">
+              <Icon name="alert" size={18} />
+              <span>Properties in {stateValue} don't qualify through this site.</span>
+            </p>
+          )}
+        </div>
+
+        <button
+          type="button"
+          className="btn btn-primary btn-block btn-lg"
+          onClick={onContinue}
+          disabled={!ready}
+        >
+          Continue
+          <Icon name="arrowRight" size={18} />
+        </button>
+        <a className="estimate-link" href={calculatorHref}>
+          <span className="estimate-link-main">
+            Estimate first
+            <Icon name="arrowDown" size={18} />
+          </span>
+          <span className="estimate-link-sub">See an illustrative number, then come back</span>
+        </a>
       </div>
-      <div className="mini-form-row">
-        <input
-          type="tel"
-          name="phone"
-          autoComplete="tel"
-          placeholder="Phone Number"
-          aria-label="Phone number"
-          value={form.phone}
-          onChange={update("phone")}
-        />
-        <input
-          type="text"
-          name="state"
-          autoComplete="address-level1"
-          placeholder="Property State"
-          aria-label="Property state"
-          value={form.state}
-          onChange={update("state")}
-        />
+
+      {/* ---------- Step 2: contact details ---------- */}
+      <div className="lead-step" hidden={step !== 2}>
+        <p className="step-count">Step 2 of 2</p>
+        <Heading ref={step2HeadingRef} tabIndex={-1} className="step-title">
+          Where should Andres reach you?
+        </Heading>
+
+        <div className="recap">
+          <span className="recap-item">
+            <Icon name="pin" size={18} />
+            {stateValue || "State not chosen"}
+          </span>
+          <button type="button" className="btn-text" onClick={() => goTo(1)}>
+            <Icon name="arrowLeft" size={16} />
+            Change<span className="sr-only"> property state</span>
+          </button>
+        </div>
+
+        {hasEstimate && (
+          <p className="estimate-chip">
+            <Icon name="check" size={18} />
+            <span>
+              Illustrative estimate ({estimate.estimatedLine}) from the calculator will
+              be included.
+            </span>
+          </p>
+        )}
+
+        <div className={`field ${errors.name ? "has-error" : ""}`}>
+          <label htmlFor={id("name")}>Full name</label>
+          {fieldError("name")}
+          <input
+            id={id("name")}
+            type="text"
+            name="name"
+            autoComplete="name"
+            ref={nameRef}
+            value={form.name}
+            onChange={update("name")}
+            required
+            aria-invalid={errors.name ? true : undefined}
+            aria-describedby={errors.name ? id("name-error") : undefined}
+          />
+        </div>
+        <div className={`field ${errors.email ? "has-error" : ""}`}>
+          <label htmlFor={id("email")}>Email</label>
+          {fieldError("email")}
+          <input
+            id={id("email")}
+            type="email"
+            name="email"
+            inputMode="email"
+            autoComplete="email"
+            ref={emailRef}
+            value={form.email}
+            onChange={update("email")}
+            required
+            aria-invalid={errors.email ? true : undefined}
+            aria-describedby={errors.email ? id("email-error") : undefined}
+          />
+        </div>
+        <div className="field">
+          <label htmlFor={id("phone")}>
+            Phone <span className="opt">Optional</span>
+          </label>
+          <input
+            id={id("phone")}
+            type="tel"
+            name="phone"
+            inputMode="tel"
+            autoComplete="tel"
+            value={form.phone}
+            onChange={update("phone")}
+          />
+        </div>
+
+        <div className="form-status" role="status" aria-live="polite">
+          {status === "error" && (
+            <p className="notice notice-warn">
+              <Icon name="alert" size={18} />
+              <span>
+                Something went wrong sending that. Please call or text {PHONE.display}
+                {stateIneligible ? "." : ", or use the pre-approval link below."}
+              </span>
+            </p>
+          )}
+          {status === "sending" && <span className="sr-only">Sending your request.</span>}
+        </div>
+
+        <div className="submit-row">
+          <button
+            type="submit"
+            className="btn btn-primary btn-block btn-lg"
+            disabled={!ready || status === "sending"}
+            aria-describedby={id("consent")}
+          >
+            {status === "sending" ? "Sending..." : "Talk Through My Options"}
+          </button>
+          <p className="secure-note">
+            <Icon name="lock" size={16} />
+            Your information is sent securely.
+          </p>
+          <p className="form-note consent" id={id("consent")}>
+            By submitting, you agree that Andres Aviles (NEXA Mortgage, NMLS #2640511) may
+            contact you by phone, text, or email about your request, including by automated
+            means. Consent is not a condition of any loan. Message and data rates may apply.
+            Reply STOP to opt out of texts.
+          </p>
+        </div>
+
+        <p className="form-who">
+          <Icon name="shield" size={18} />
+          <span>
+            Goes to Andres Aviles, Mortgage Loan Officer, NEXA Mortgage (NMLS #2640511).{" "}
+            <a href={NMLS_CONSUMER_ACCESS_LINK} target="_blank" rel="noreferrer">
+              Verify on NMLS Consumer Access
+            </a>
+            . Equal Housing Opportunity.
+          </span>
+        </p>
+
+        {!stateIneligible && (
+          <p className="form-alt">
+            Rather go straight to your options?{" "}
+            <a href={PREAPPROVAL_LINK}>Get pre-approved online</a>
+            <span className="form-alt-sub"> (opens the lender's site)</span>
+          </p>
+        )}
       </div>
+
       <input
         type="text"
         name="company"
@@ -166,33 +513,6 @@ export function LeadForm({ estimate }) {
         value={form.company}
         onChange={update("company")}
       />
-
-      {error && <div className="warning-box">{error}</div>}
-      {status === "error" && (
-        <div className="warning-box">
-          Something went wrong sending that. Please call or text {PHONE.display}, or
-          use the pre-approval link below.
-        </div>
-      )}
-
-      <button
-        type="submit"
-        className="primary-cta full-width form-submit"
-        disabled={status === "sending"}
-      >
-        {status === "sending" ? "Sending..." : "Talk Through My Options"}
-      </button>
-
-      <p className="mini-form-note">
-        By submitting, you agree that Andres Aviles (NEXA Mortgage, NMLS #2640511) may
-        contact you by phone, text, or email about your request, including by automated
-        means. Consent is not a condition of any loan. Message and data rates may apply.
-        Reply STOP to opt out of texts.
-      </p>
-      <p className="mini-form-note">
-        Rather go straight to your options?{" "}
-        <a href={PREAPPROVAL_LINK}>Get pre-approved online</a>.
-      </p>
     </form>
   );
 }
