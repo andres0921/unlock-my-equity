@@ -96,8 +96,7 @@ export function Footer() {
             Approval may be granted in five minutes but is ultimately subject to
             verification of income and employment, as well as verification that your
             property is in at least average condition with a property condition report.
-            Five business day funding timeline assumes closing the loan with our remote
-            online notary. Funding timelines may be longer for loans secured by
+            Funding timelines may be longer for loans secured by
             properties located in counties that do not permit recording of e-signatures
             or that otherwise require an in-person closing, or that require a waiting
             period prior to closing.
