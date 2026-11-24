@@ -1,20 +1,21 @@
 import {
   GUIDES,
   NMLS_CONSUMER_ACCESS_LINK,
+  PHONE,
   PREAPPROVAL_LINK,
   PRIVACY_POLICY_LINK,
   SITE_NAME,
   TERMS_OF_SERVICE_LINK,
   TEXAS_NOTICE_LINK,
 } from "./site";
+import { Icon } from "./ui";
 
 export function Footer() {
   return (
-    <>
-      <footer className="site-footer" id="footer">
+    <footer className="site-footer" id="footer">
         <div className="container footer-grid">
           <div className="footer-column footer-brand-column">
-            <h3>{SITE_NAME}</h3>
+            <h2 className="footer-title">{SITE_NAME}</h2>
             <div className="footer-license-list">
               <div>NEXA Mortgage</div>
               <div>Corporate NMLS #1660690</div>
@@ -30,7 +31,7 @@ export function Footer() {
           </div>
 
           <div className="footer-column">
-            <h4>Guides</h4>
+            <h3>Guides</h3>
             <div className="footer-links">
               <a href="/#calculator">HELOC Calculator</a>
               {GUIDES.map((g) => (
@@ -38,9 +39,10 @@ export function Footer() {
                   {g.label}
                 </a>
               ))}
+              <a href={PREAPPROVAL_LINK}>Get Pre-Approved</a>
             </div>
 
-            <h4 className="footer-subhead">Legal</h4>
+            <h3 className="footer-subhead">Legal</h3>
             <div className="footer-links">
               <a href={PRIVACY_POLICY_LINK} target="_blank" rel="noreferrer">
                 Privacy Policy
@@ -58,7 +60,7 @@ export function Footer() {
           </div>
 
           <div className="footer-column">
-            <h4>Licensing</h4>
+            <h3>Licensing</h3>
             <div className="footer-license-list">
               <div>NEXA Mortgage</div>
               <div>Corporate NMLS: #1660690</div>
@@ -66,6 +68,10 @@ export function Footer() {
               <div>5559 S Sossaman Rd Bldg #1 Ste #101</div>
               <div>Mesa AZ 85212</div>
             </div>
+            <a className="footer-phone" href={PHONE.href}>
+              <Icon name="phone" size={16} />
+              {PHONE.display}
+            </a>
           </div>
         </div>
 
@@ -113,12 +119,15 @@ export function Footer() {
 
         <div className="container footer-bottom">
           <div>© {new Date().getFullYear()} Unlock My Equity USA. All rights reserved.</div>
+          <div className="eho">
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M3 11.5L12 4l9 7.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+              <path d="M5.5 10v10h13V10" fill="none" stroke="currentColor" strokeWidth="2" />
+              <path d="M9 13h6M9 16h6" stroke="currentColor" strokeWidth="2" />
+            </svg>
+            Equal Housing Opportunity
+          </div>
         </div>
-      </footer>
-
-      <a href={PREAPPROVAL_LINK} className="mobile-sticky-cta">
-        Get My HELOC Options
-      </a>
-    </>
+    </footer>
   );
 }
