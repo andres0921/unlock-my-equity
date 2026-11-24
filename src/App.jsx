@@ -241,16 +241,15 @@ export default function App() {
         <section className="hero" aria-labelledby="hero-title">
           {/* Desktop-only accents: hidden (and, being lazy, never fetched) on phones. */}
           <Illo
-            name="c-bungalow"
+            name="c4-elevation"
             square
             className="hero-art hero-art-house"
             sizes="300px"
           />
           <Illo
-            name="c-swatches"
-            square
+            name="c4-samples"
             className="hero-art hero-art-swatches"
-            sizes="260px"
+            sizes="280px"
           />
 
           <div className="container hero-inner">
@@ -293,9 +292,9 @@ export default function App() {
           </div>
         </section>
 
-        {/* ---------------- Calculator (peach band) ---------------- */}
+        {/* ---------------- Calculator (periwinkle band) ---------------- */}
         <section
-          className="band band-peach"
+          className="band band-periwinkle"
           id="calculator"
           tabIndex={-1}
           aria-labelledby="calc-title"
@@ -656,8 +655,8 @@ export default function App() {
           </div>
         </section>
 
-        {/* ---------------- Ways to use equity (sky band) ---------------- */}
-        <section className="band band-sky" id="uses" aria-labelledby="uses-title">
+        {/* ---------------- Ways to use equity (gridded white band) ---------------- */}
+        <section className="band band-paper" id="uses" aria-labelledby="uses-title">
           {/* id="benefits" keeps old /#benefits campaign links working. */}
           <div className="container" id="benefits">
             <div className="section-head">
@@ -703,8 +702,8 @@ export default function App() {
               <article className="guide-row">
                 <div className="guide-row-art">
                   <Illo
-                    name="c-remodel"
-                    alt="Paper-cut illustration of a sunny room with tile samples, a measuring tape, and a paint roller ready for a remodel."
+                    name="c4-samples"
+                    alt="Colored-pencil drawing on grid paper of flooring, tile, and cabinet samples pulled apart in an exploded view."
                     sizes="(min-width: 900px) 540px, calc(100vw - 32px)"
                   />
                 </div>
@@ -726,8 +725,8 @@ export default function App() {
               <article className="guide-row is-flipped" id="borrow-better">
                 <div className="guide-row-art">
                   <Illo
-                    name="c-planning"
-                    alt="Paper-cut illustration of a kitchen table with a blank planning sheet, a pencil, a plant, and a cup of coffee."
+                    name="c4-floorplan"
+                    alt="Colored-pencil drawing on grid paper of a folded floor plan with a ruler and a pencil."
                     sizes="(min-width: 900px) 540px, calc(100vw - 32px)"
                   />
                 </div>
@@ -750,7 +749,7 @@ export default function App() {
         </section>
 
         {/* ---------------- FAQ ---------------- */}
-        <section className="band band-soft" id="faq" aria-labelledby="faq-title">
+        <section className="band band-lavender" id="faq" aria-labelledby="faq-title">
           <div className="container narrow">
             <div className="section-head">
               <p className="eyebrow">Frequently asked questions</p>

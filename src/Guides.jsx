@@ -59,7 +59,7 @@ function GuideLayout({ eyebrow, title, intro, children, sources, current, art })
                 name={art.name}
                 alt={art.alt}
                 eager
-                sizes="(min-width: 900px) 460px, calc(100vw - 32px)"
+                sizes="(min-width: 1200px) 503px, (min-width: 900px) calc((100vw - 120px) / 2.15), (min-width: 640px) calc(100vw - 48px), calc(100vw - 32px)"
               />
             </div>
           </div>
@@ -69,7 +69,7 @@ function GuideLayout({ eyebrow, title, intro, children, sources, current, art })
           {children}
         </article>
 
-        <section className="band band-peach" aria-labelledby="guide-lead-title">
+        <section className="band band-periwinkle" aria-labelledby="guide-lead-title">
           <div className="container narrow">
             <div className="section-head">
               <p className="eyebrow">Take the next step</p>
@@ -115,8 +115,8 @@ export function HowAHelocWorks() {
     <GuideLayout
       current="/how-a-heloc-works"
       art={{
-        name: "c-remodel",
-        alt: "Paper-cut illustration of a sunny room with tile samples, a measuring tape, and a paint roller ready for a remodel.",
+        name: "c4-samples",
+        alt: "Colored-pencil drawing on grid paper of flooring, tile, and cabinet samples pulled apart in an exploded view.",
       }}
       eyebrow="HELOC basics"
       title="How a HELOC works, in plain English"
@@ -237,8 +237,8 @@ export function HelocVsCashOut() {
     <GuideLayout
       current="/heloc-vs-cash-out-refinance"
       art={{
-        name: "c-planning",
-        alt: "Paper-cut illustration of a kitchen table with a blank planning sheet, a pencil, a plant, and a cup of coffee.",
+        name: "c4-floorplan",
+        alt: "Colored-pencil drawing on grid paper of a folded floor plan with a ruler and a pencil.",
       }}
       eyebrow="Compare your options"
       title="HELOC vs. cash-out refinance: which fits you?"

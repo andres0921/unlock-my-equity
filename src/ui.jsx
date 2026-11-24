@@ -101,8 +101,8 @@ export function Icon({ name, size = 20, className = "" }) {
 }
 
 /**
- * Paper-cut illustration from /public/images. Every file ships at 480, 768 and
- * 1024px wide. Square art (bungalow, swatches) is 1:1; scene art is 4:3.
+ * Colored-pencil illustration from /public/images. Every file ships at 480, 768
+ * and 1024px wide. The house elevation is 1:1; the floor plan and samples are 4:3.
  * Width/height are always set so the browser reserves space (no layout shift).
  */
 export function Illo({ name, alt = "", sizes, square = false, eager = false, className }) {
@@ -122,7 +122,7 @@ export function Illo({ name, alt = "", sizes, square = false, eager = false, cla
   );
 }
 
-/* Small paper-house mark drawn in code for the header wordmark. */
+/* Small blueprint-house mark (grid tile, violet outline, yellow door) drawn in code. */
 function BrandMark() {
   return (
     <svg
@@ -133,11 +133,11 @@ function BrandMark() {
       aria-hidden="true"
       focusable="false"
     >
-      <circle cx="20" cy="20" r="20" fill="#FFF0DF" />
-      <path d="M9 20.5L20 11l11 9.5" fill="none" stroke="#006358" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M12.5 19v10.5h15V19" fill="#006358" />
-      <rect x="18" y="23" width="4.5" height="6.5" rx="1.2" fill="#FFF0DF" />
-      <path d="M8 33c6-3.5 16-3.5 24 0" fill="none" stroke="#E98B6B" strokeWidth="2.4" strokeLinecap="round" />
+      <rect x="1" y="1" width="38" height="38" rx="12" fill="#F3EFFF" stroke="#AAA2E3" strokeWidth="1.5" />
+      <path d="M1 14h38M1 27h38M14 1v38M27 1v38" stroke="#AAA2E3" strokeOpacity="0.45" strokeWidth="1" />
+      <path d="M9 20.5L20 11l11 9.5" fill="none" stroke="#51408D" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M12.5 19v11h15V19" fill="#AAA2E3" fillOpacity="0.55" stroke="#51408D" strokeWidth="2" strokeLinejoin="round" />
+      <rect x="17.8" y="22.5" width="4.6" height="7.5" rx="2.3" fill="#F7DB84" stroke="#51408D" strokeWidth="1.2" />
     </svg>
   );
 }
@@ -160,7 +160,9 @@ export function SiteHeader({ home = false, current }) {
 
         <nav className="header-nav" aria-label="Main">
           <a href={`${base}#calculator`}>Calculator</a>
-          <a href={`${base}#how-it-works`}>How it works</a>
+          <a className="nav-extra" href={`${base}#how-it-works`}>
+            How it works
+          </a>
           {GUIDES.map((g) => (
             <a
               key={g.path}
@@ -170,7 +172,9 @@ export function SiteHeader({ home = false, current }) {
               {g.label}
             </a>
           ))}
-          <a href={`${base}#faq`}>FAQ</a>
+          <a className="nav-extra" href={`${base}#faq`}>
+            FAQ
+          </a>
         </nav>
 
         <a className="header-phone" href={PHONE.href} aria-label={`Call or text ${PHONE.display}`}>

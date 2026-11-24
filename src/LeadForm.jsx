@@ -251,14 +251,23 @@ export function LeadForm({
       onSubmit={onSubmit}
       noValidate
     >
-      <div className="step-meter" aria-hidden="true">
-        <span className="is-on" />
-        <span className={step === 2 ? "is-on" : ""} />
-      </div>
+      <ol className="step-strip" aria-label="Request steps">
+        {["Property", "Contact"].map((label, i) => {
+          const current = step === i + 1;
+          return (
+            <li key={label} aria-current={current ? "step" : undefined}>
+              <span className="step-strip-num" aria-hidden="true">
+                {i + 1}
+              </span>
+              {label}
+            </li>
+          );
+        })}
+      </ol>
 
       {/* ---------- Step 1: the property ---------- */}
       <div className="lead-step" hidden={step !== 1}>
-        <p className="step-count">Step 1 of 2</p>
+        <p className="sr-only">Step 1 of 2</p>
         <Heading ref={step1HeadingRef} tabIndex={-1} className="step-title">
           Where is the home you'd borrow against?
         </Heading>
@@ -315,7 +324,7 @@ export function LeadForm({
 
       {/* ---------- Step 2: contact details ---------- */}
       <div className="lead-step" hidden={step !== 2}>
-        <p className="step-count">Step 2 of 2</p>
+        <p className="sr-only">Step 2 of 2</p>
         <Heading ref={step2HeadingRef} tabIndex={-1} className="step-title">
           Where should Andres reach you?
         </Heading>
