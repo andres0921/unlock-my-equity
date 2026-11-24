@@ -239,58 +239,59 @@ export default function App() {
       <main>
         {/* ---------------- Hero: the request form ---------------- */}
         <section className="hero" aria-labelledby="hero-title">
-          <div className="container hero-grid">
-            {/* Left column on desktop: headline and the two-step form together. */}
-            <div className="hero-main">
-              <p className="eyebrow">Home equity line of credit</p>
-              <h1 id="hero-title">
-                Unlock your home equity. <span>Keep your low first mortgage.</span>
-              </h1>
-              <p className="hero-sub">
-                Two quick questions, then Andres Aviles of NEXA&nbsp;Mortgage follows&nbsp;up.
-              </p>
+          {/* Desktop-only accents: hidden (and, being lazy, never fetched) on phones. */}
+          <div className="hero-art hero-art-house">
+            <Illo
+              name="c2p-house"
+              square
+              sizes="(min-width: 1208px) 280px, calc(50vw - 324px)"
+            />
+          </div>
+          <div className="hero-art hero-art-door">
+            <Illo
+              name="c2p-door"
+              square
+              sizes="(min-width: 1208px) 280px, calc(50vw - 324px)"
+            />
+          </div>
 
-              <div className="form-card" id="next-step" tabIndex={-1}>
-                <LeadForm
-                  ref={leadRef}
-                  estimate={estimate}
-                  propertyState={propertyState}
-                  onPropertyStateChange={setPropertyState}
-                />
-              </div>
-            </div>
+          <div className="container hero-inner">
+            <p className="eyebrow">Home equity line of credit</p>
+            <h1 id="hero-title">
+              Unlock your home equity. <span>Keep your low first mortgage.</span>
+            </h1>
+            <p className="hero-sub">
+              Two quick questions, then Andres Aviles of NEXA&nbsp;Mortgage follows&nbsp;up.
+            </p>
 
-            {/* Right column on desktop; below the form on phones. */}
-            <div className="hero-scene paper-frame">
-              <Illo
-                name="c2-porch"
-                eager
-                priorityMedia="(min-width: 900px)"
-                sizes="(min-width: 1200px) 560px, (min-width: 900px) 48vw, calc(100vw - 42px)"
+            <div className="form-card" id="next-step" tabIndex={-1}>
+              <LeadForm
+                ref={leadRef}
+                estimate={estimate}
+                propertyState={propertyState}
+                onPropertyStateChange={setPropertyState}
               />
             </div>
 
-            <div className="hero-meta">
-              <ul className="hero-points">
-                <li>
-                  <Icon name="home" size={18} />
-                  Your first mortgage stays in place
-                </li>
-                <li>
-                  <Icon name="check" size={18} />
-                  Estimate in 3 quick steps
-                </li>
-                <li>
-                  <Icon name="check" size={18} />
-                  Funding in as little as 5 business days in some scenarios*
-                </li>
-              </ul>
-              <p className="hero-footnote">
-                *Fast-close and no-appraisal options depend on state, property type, title,
-                county recording rules, valuation eligibility, remote online notarization
-                availability, and final underwriting review.
-              </p>
-            </div>
+            <ul className="hero-points">
+              <li>
+                <Icon name="home" size={18} />
+                Your first mortgage stays in place
+              </li>
+              <li>
+                <Icon name="check" size={18} />
+                Estimate in 3 quick steps
+              </li>
+              <li>
+                <Icon name="check" size={18} />
+                Funding in as little as 5 business days in some scenarios*
+              </li>
+            </ul>
+            <p className="hero-footnote">
+              *Fast-close and no-appraisal options depend on state, property type, title,
+              county recording rules, valuation eligibility, remote online notarization
+              availability, and final underwriting review.
+            </p>
           </div>
         </section>
 
@@ -657,25 +658,17 @@ export default function App() {
           </div>
         </section>
 
-        {/* ---------------- Ways to use equity (cream band) ---------------- */}
-        <section className="band band-cream" id="uses" aria-labelledby="uses-title">
+        {/* ---------------- Ways to use equity (sky band) ---------------- */}
+        <section className="band band-sky" id="uses" aria-labelledby="uses-title">
           {/* id="benefits" keeps old /#benefits campaign links working. */}
           <div className="container" id="benefits">
-            <div className="uses-intro">
-              <div className="section-head">
-                <p className="eyebrow">Ways to use your equity</p>
-                <h2 id="uses-title">Put it toward things that last</h2>
-                <p>
-                  A HELOC can be a smart tool when it creates value, improves cash flow,
-                  or strengthens your overall position.
-                </p>
-              </div>
-              <div className="uses-art paper-frame is-flipped">
-                <Illo
-                  name="c2-paint"
-                  sizes="(min-width: 1200px) 520px, (min-width: 900px) 44vw, calc(100vw - 42px)"
-                />
-              </div>
+            <div className="section-head">
+              <p className="eyebrow">Ways to use your equity</p>
+              <h2 id="uses-title">Put it toward things that last</h2>
+              <p>
+                A HELOC can be a smart tool when it creates value, improves cash flow,
+                or strengthens your overall position.
+              </p>
             </div>
             <ul className="uses-grid">
               {USES.map((u) => (
@@ -708,16 +701,16 @@ export default function App() {
               <h2 id="guides-title">Learn the basics in plain English</h2>
             </div>
 
-            <div className="guide-feature">
-              <div className="paper-frame">
-                <Illo
-                  name="c2-plan"
-                  sizes="(min-width: 1200px) 530px, (min-width: 900px) 44vw, calc(100vw - 42px)"
-                />
-              </div>
-
-              <div className="guide-cards">
-                <article className="guide-card">
+            <div className="guide-rows">
+              <article className="guide-row">
+                <div className="guide-row-art">
+                  <Illo
+                    name="c2p-kitchen"
+                    alt="Line illustration of a bright, finished kitchen with an island, open shelves, and a pendant light."
+                    sizes="(min-width: 1144px) 536px, (min-width: 900px) calc(52vw - 59px), calc(100vw - 40px)"
+                  />
+                </div>
+                <div className="guide-row-copy">
                   <p className="eyebrow">HELOC basics</p>
                   <h3>How a HELOC works, in plain English</h3>
                   <p>
@@ -728,10 +721,19 @@ export default function App() {
                     Read the guide
                     <Icon name="arrowRight" size={18} />
                   </a>
-                </article>
+                </div>
+              </article>
 
-                {/* id="borrow-better" keeps old /#borrow-better campaign links working. */}
-                <article className="guide-card" id="borrow-better">
+              {/* id="borrow-better" keeps old /#borrow-better campaign links working. */}
+              <article className="guide-row is-flipped" id="borrow-better">
+                <div className="guide-row-art">
+                  <Illo
+                    name="c2p-window"
+                    alt="Line illustration of a sunlit window above a wooden bench with cushions and a potted plant."
+                    sizes="(min-width: 1144px) 488px, (min-width: 900px) calc(48vw - 61px), calc(100vw - 40px)"
+                  />
+                </div>
+                <div className="guide-row-copy">
                   <p className="eyebrow">Compare your options</p>
                   <h3>Get cash without starting your mortgage over</h3>
                   <p>
@@ -743,14 +745,14 @@ export default function App() {
                     HELOC vs. cash-out refinance
                     <Icon name="arrowRight" size={18} />
                   </a>
-                </article>
-              </div>
+                </div>
+              </article>
             </div>
           </div>
         </section>
 
         {/* ---------------- FAQ ---------------- */}
-        <section className="band band-cream" id="faq" aria-labelledby="faq-title">
+        <section className="band band-soft" id="faq" aria-labelledby="faq-title">
           <div className="container narrow">
             <div className="section-head">
               <p className="eyebrow">Frequently asked questions</p>
