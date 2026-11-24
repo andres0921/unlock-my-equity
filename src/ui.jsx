@@ -101,28 +101,47 @@ export function Icon({ name, size = 20, className = "" }) {
 }
 
 /**
- * Paper-cut illustration from /public/images. Every file ships at 480, 768 and
- * 1024px wide. Square art (bungalow, swatches) is 1:1; scene art is 4:3.
- * Width/height are always set so the browser reserves space (no layout shift).
+ * Layered-cardstock illustration from /public/images. Every file ships at 480,
+ * 768 and 1024px wide, 4:3. Decorative, so alt defaults to "". Width/height are
+ * always set so the browser reserves space (no layout shift).
+ *
+ * `priorityMedia` (hero only): a media query where the image is the LCP. The img
+ * is wrapped in <picture> so React skips its automatic all-widths preload, and a
+ * high-priority preload is emitted for that media query only. Elsewhere the
+ * browser picks the priority itself.
  */
-export function Illo({ name, alt = "", sizes, square = false, eager = false, className }) {
-  const h = (w) => (square ? w : (w * 3) / 4);
-  return (
+export function Illo({ name, alt = "", sizes, eager = false, priorityMedia, className }) {
+  const srcSet = [480, 768, 1024].map((w) => `/images/${name}-${w}.webp ${w}w`).join(", ");
+  const img = (
     <img
       className={className}
       src={`/images/${name}-768.webp`}
-      srcSet={[480, 768, 1024].map((w) => `/images/${name}-${w}.webp ${w}w`).join(", ")}
+      srcSet={srcSet}
       sizes={sizes}
       width={1024}
-      height={h(1024)}
+      height={768}
       alt={alt}
       decoding="async"
       loading={eager ? "eager" : "lazy"}
     />
   );
+  if (!priorityMedia) return img;
+  return (
+    <>
+      <link
+        rel="preload"
+        as="image"
+        imageSrcSet={srcSet}
+        imageSizes={sizes}
+        media={priorityMedia}
+        fetchPriority="high"
+      />
+      <picture>{img}</picture>
+    </>
+  );
 }
 
-/* Small paper-house mark drawn in code for the header wordmark. */
+/* Small cardstock porch mark drawn in code for the header wordmark. */
 function BrandMark() {
   return (
     <svg
@@ -133,11 +152,12 @@ function BrandMark() {
       aria-hidden="true"
       focusable="false"
     >
-      <circle cx="20" cy="20" r="20" fill="#FFF0DF" />
-      <path d="M9 20.5L20 11l11 9.5" fill="none" stroke="#006358" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M12.5 19v10.5h15V19" fill="#006358" />
-      <rect x="18" y="23" width="4.5" height="6.5" rx="1.2" fill="#FFF0DF" />
-      <path d="M8 33c6-3.5 16-3.5 24 0" fill="none" stroke="#E98B6B" strokeWidth="2.4" strokeLinecap="round" />
+      <circle cx="20" cy="20" r="20" fill="#FCE6DC" />
+      <circle cx="29" cy="12" r="4" fill="#F4BC88" />
+      <path d="M9 20.5L20 11l11 9.5" fill="none" stroke="#9B382F" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M12.5 19v10.5h15V19" fill="#9B382F" />
+      <rect x="17.8" y="22.5" width="5" height="7" rx="2.5" fill="#E9937F" />
+      <path d="M8 33c6-3.5 16-3.5 24 0" fill="none" stroke="#F4BC88" strokeWidth="2.4" strokeLinecap="round" />
     </svg>
   );
 }

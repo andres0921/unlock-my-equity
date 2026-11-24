@@ -54,10 +54,9 @@ function GuideLayout({ eyebrow, title, intro, children, sources, current, art })
                 </a>
               </div>
             </div>
-            <div className="guide-hero-art">
+            <div className="guide-hero-art paper-frame">
               <Illo
-                name={art.name}
-                alt={art.alt}
+                name={art}
                 eager
                 sizes="(min-width: 900px) 460px, calc(100vw - 32px)"
               />
@@ -114,10 +113,7 @@ export function HowAHelocWorks() {
   return (
     <GuideLayout
       current="/how-a-heloc-works"
-      art={{
-        name: "c-remodel",
-        alt: "Paper-cut illustration of a sunny room with tile samples, a measuring tape, and a paint roller ready for a remodel.",
-      }}
+      art="c2-plan"
       eyebrow="HELOC basics"
       title="How a HELOC works, in plain English"
       intro="A home equity line of credit lets you borrow against the equity you've built, without replacing the mortgage you already have. Here's how it actually works, step by step."
@@ -236,10 +232,7 @@ export function HelocVsCashOut() {
   return (
     <GuideLayout
       current="/heloc-vs-cash-out-refinance"
-      art={{
-        name: "c-planning",
-        alt: "Paper-cut illustration of a kitchen table with a blank planning sheet, a pencil, a plant, and a cup of coffee.",
-      }}
+      art="c2-paint"
       eyebrow="Compare your options"
       title="HELOC vs. cash-out refinance: which fits you?"
       intro="Both turn your home equity into cash. The biggest difference is what happens to the mortgage you already have, and that one detail can change the whole math."
