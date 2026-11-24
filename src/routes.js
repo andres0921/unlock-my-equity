@@ -65,7 +65,7 @@ const article = (path, headline, description) => ({
 /**
  * Every page on the site. Each is pre-rendered at build time to dist/<file>
  * with its own title, description, canonical, social image and schema (see
- * prerender.js; routes without `ogImage` use the bungalow illustration),
+ * prerender.js; routes without `ogImage` use the house exterior photo),
  * and the browser hydrates the matching component (see main.jsx).
  */
 export const routes = [
@@ -88,10 +88,10 @@ export const routes = [
       "A plain-English guide to home equity lines of credit: how much you can borrow, the draw and repayment periods, how the rate works, what it takes to get approved, and the tax rules.",
     Component: HowAHelocWorks,
     ogImage: {
-      src: "/images/c3-materials-1024.webp",
+      src: "/images/c3p-interior-1024.webp",
       width: 1024,
       height: 768,
-      alt: "Gouache illustration of hands arranging a wood sample, tile, and paint swatches",
+      alt: "A calm living room with oak floors, a linen sofa, and sage walls in soft daylight",
     },
     jsonLd: [
       article(
@@ -114,10 +114,10 @@ export const routes = [
       "Compare a HELOC and a cash-out refinance side by side: what happens to your current mortgage and rate, up-front costs, payments, and when each one makes sense.",
     Component: HelocVsCashOut,
     ogImage: {
-      src: "/images/c3-patio-wide-1024.webp",
+      src: "/images/c3p-kitchen-1024.webp",
       width: 1024,
       height: 768,
-      alt: "Gouache illustration of stepping stones leading through a garden to a small patio",
+      alt: "A renovated kitchen with oak cabinets, white counters, and sage-green walls",
     },
     jsonLd: [
       article(

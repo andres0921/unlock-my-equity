@@ -72,6 +72,12 @@ const PATHS = {
     </>
   ),
   chat: <path d="M20 12a7.5 7.5 0 01-11 6.6L4 20l1.4-4.6A7.5 7.5 0 1120 12z" />,
+  lock: (
+    <>
+      <rect x="5" y="10.5" width="14" height="10" rx="2" />
+      <path d="M8 10.5V8a4 4 0 018 0v2.5" />
+    </>
+  ),
   doc: (
     <>
       <path d="M7 3h7l5 5v11a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z" />
@@ -101,8 +107,8 @@ export function Icon({ name, size = 20, className = "" }) {
 }
 
 /**
- * Gouache garden illustration from /public/images. Every file ships at 480, 768
- * and 1024px wide. Square art (house, patio) is 1:1; materials art is 4:3.
+ * Photo from /public/images. Every file ships at 480, 768 and 1024px wide.
+ * Square accents (house, handle) are 1:1; interior scenes are 4:3.
  * Width/height are always set so the browser reserves space (no layout shift).
  */
 export function Illo({ name, alt = "", sizes, square = false, eager = false, className }) {
@@ -122,23 +128,27 @@ export function Illo({ name, alt = "", sizes, square = false, eager = false, cla
   );
 }
 
-/* Small garden-house mark drawn in code for the header wordmark. */
+/* Simple house mark drawn in code for the header wordmark. */
 function BrandMark() {
   return (
     <svg
       className="brand-mark"
-      width="40"
-      height="40"
-      viewBox="0 0 40 40"
+      width="36"
+      height="36"
+      viewBox="0 0 36 36"
       aria-hidden="true"
       focusable="false"
     >
-      <circle cx="20" cy="20" r="20" fill="#FFFFFF" />
-      <circle cx="29" cy="11" r="4" fill="#F4D88F" />
-      <path d="M9 20.5L20 11l11 9.5" fill="none" stroke="#182E45" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M12.5 19v10.5h15V19" fill="#176044" />
-      <rect x="18" y="23" width="4.5" height="6.5" rx="1.2" fill="#F4D88F" />
-      <path d="M6.5 31.5c3-4 7-4.5 9-1.5-3.5 2.5-6.5 2.8-9 1.5zM33.5 31.5c-3-4-7-4.5-9-1.5 3.5 2.5 6.5 2.8 9 1.5z" fill="#75BE91" />
+      <rect width="36" height="36" rx="9" fill="#205447" />
+      <path
+        d="M9.5 17.5L18 10.5l8.5 7M12 15.8V25.5h12v-9.7"
+        fill="none"
+        stroke="#FFFFFF"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path d="M16 25.5v-5h4v5" fill="none" stroke="#FFFFFF" strokeWidth="2.2" strokeLinejoin="round" />
     </svg>
   );
 }

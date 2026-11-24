@@ -411,6 +411,10 @@ export function LeadForm({
           >
             {status === "sending" ? "Sending..." : "Talk Through My Options"}
           </button>
+          <p className="secure-note">
+            <Icon name="lock" size={16} />
+            Your information is sent securely.
+          </p>
           <p className="form-note consent" id={id("consent")}>
             By submitting, you agree that Andres Aviles (NEXA Mortgage, NMLS #2640511) may
             contact you by phone, text, or email about your request, including by automated

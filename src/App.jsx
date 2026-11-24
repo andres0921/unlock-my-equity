@@ -241,16 +241,16 @@ export default function App() {
         <section className="hero" aria-labelledby="hero-title">
           {/* Desktop-only accents: hidden (and, being lazy, never fetched) on phones. */}
           <Illo
-            name="c3-house"
+            name="c3p-house"
             square
             className="hero-art hero-art-house"
-            sizes="min(300px, calc(50vw - 324px))"
+            sizes="min(280px, calc(50vw - 324px))"
           />
           <Illo
-            name="c3-patio"
+            name="c3p-handle"
             square
-            className="hero-art hero-art-patio"
-            sizes="min(260px, calc(50vw - 324px))"
+            className="hero-art hero-art-swatches"
+            sizes="min(240px, calc(50vw - 324px))"
           />
 
           <div className="container hero-inner">
@@ -293,9 +293,9 @@ export default function App() {
           </div>
         </section>
 
-        {/* ---------------- Calculator (deeper mint band, curved edges) ---------------- */}
+        {/* ---------------- Calculator (linen band) ---------------- */}
         <section
-          className="band band-deep band-curved"
+          className="band band-peach"
           id="calculator"
           tabIndex={-1}
           aria-labelledby="calc-title"
@@ -656,8 +656,8 @@ export default function App() {
           </div>
         </section>
 
-        {/* ---------------- Ways to use equity (deeper mint band, curved edges) ---------------- */}
-        <section className="band band-deep band-curved is-mirrored" id="uses" aria-labelledby="uses-title">
+        {/* ---------------- Ways to use equity (sage band) ---------------- */}
+        <section className="band band-sky" id="uses" aria-labelledby="uses-title">
           {/* id="benefits" keeps old /#benefits campaign links working. */}
           <div className="container" id="benefits">
             <div className="section-head">
@@ -691,7 +691,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* ---------------- Illustrated guides ---------------- */}
+        {/* ---------------- Guides ---------------- */}
         <section className="band" id="guides" aria-labelledby="guides-title">
           <div className="container">
             <div className="section-head">
@@ -703,9 +703,9 @@ export default function App() {
               <article className="guide-row">
                 <div className="guide-row-art">
                   <Illo
-                    name="c3-materials"
-                    alt="Gouache illustration of two hands arranging a wood sample, a sage tile sheet, and paint swatches on a table framed by garden leaves."
-                    sizes="(min-width: 900px) min(536px, calc((100vw - 120px) * 0.524)), (min-width: 640px) calc(100vw - 48px), calc(100vw - 32px)"
+                    name="c3p-interior"
+                    alt="A calm living room with oak floors, a linen sofa, and sage walls in soft daylight."
+                    sizes="(min-width: 900px) calc((min(100vw, 1200px) - 120px) * 1.1 / 2.1), (min-width: 640px) calc(100vw - 48px), calc(100vw - 32px)"
                   />
                 </div>
                 <div className="guide-row-copy">
@@ -726,9 +726,9 @@ export default function App() {
               <article className="guide-row is-flipped" id="borrow-better">
                 <div className="guide-row-art">
                   <Illo
-                    name="c3-patio-wide"
-                    alt="Gouache illustration seen from above of round stepping stones leading through a garden to a small patio with two chairs."
-                    sizes="(min-width: 900px) min(488px, calc((100vw - 120px) * 0.476)), (min-width: 640px) calc(100vw - 48px), calc(100vw - 32px)"
+                    name="c3p-kitchen"
+                    alt="A renovated kitchen with oak cabinets, white counters, and sage-green walls."
+                    sizes="(min-width: 900px) calc((min(100vw, 1200px) - 120px) / 2.1), (min-width: 640px) calc(100vw - 48px), calc(100vw - 32px)"
                   />
                 </div>
                 <div className="guide-row-copy">
@@ -750,7 +750,7 @@ export default function App() {
         </section>
 
         {/* ---------------- FAQ ---------------- */}
-        <section className="band band-mint" id="faq" aria-labelledby="faq-title">
+        <section className="band band-soft" id="faq" aria-labelledby="faq-title">
           <div className="container narrow">
             <div className="section-head">
               <p className="eyebrow">Frequently asked questions</p>
