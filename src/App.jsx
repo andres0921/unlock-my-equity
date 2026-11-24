@@ -1,690 +1,363 @@
-import React, { useMemo, useState } from "react";
-import { FAQS, GUIDES, PREAPPROVAL_LINK } from "./site";
+import { Calculator } from "./Calculator";
+import { useEstimate } from "./estimate";
 import { Footer } from "./Footer";
 import { LeadForm } from "./LeadForm";
+import { FAQS, GUIDES, PHONE, PHOTOS, PREAPPROVAL_LINK } from "./site";
+import { Icon, Photo, SiteHeader } from "./ui";
 
-const STATES = [
-  "Alabama",
-  "Alaska",
-  "Arizona",
-  "Arkansas",
-  "California",
-  "Colorado",
-  "Connecticut",
-  "Delaware",
-  "Florida",
-  "Georgia",
-  "Hawaii",
-  "Idaho",
-  "Illinois",
-  "Indiana",
-  "Iowa",
-  "Kansas",
-  "Kentucky",
-  "Louisiana",
-  "Maine",
-  "Maryland",
-  "Massachusetts",
-  "Michigan",
-  "Minnesota",
-  "Mississippi",
-  "Missouri",
-  "Montana",
-  "Nebraska",
-  "Nevada",
-  "New Hampshire",
-  "New Jersey",
-  "New Mexico",
-  "New York",
-  "North Carolina",
-  "North Dakota",
-  "Ohio",
-  "Oklahoma",
-  "Oregon",
-  "Pennsylvania",
-  "Rhode Island",
-  "South Carolina",
-  "South Dakota",
-  "Tennessee",
-  "Texas",
-  "Utah",
-  "Vermont",
-  "Virginia",
-  "Washington",
-  "West Virginia",
-  "Wisconsin",
-  "Wyoming",
+const HOW_STEPS = [
+  {
+    title: "Run the estimate",
+    text: "Enter your home value and what you owe. The estimate updates as you type, and no contact details are needed to see it.",
+  },
+  {
+    title: "Talk it through",
+    text: "Send a follow-up request and Andres Aviles (NMLS #2640511) will reach out by phone, text, or email to go over your numbers and options.",
+  },
+  {
+    title: "Check your rate",
+    text: "Checking your rate starts with a soft credit pull that doesn't affect your score. A full application requires a hard credit pull.",
+  },
 ];
 
-const QUICK_TURN_STATES = [
-  "Arizona",
-  "California",
-  "Colorado",
-  "Florida",
-  "Idaho",
-  "Nevada",
-  "Oregon",
-  "Texas",
-  "Utah",
-  "Washington",
+const USES = [
+  {
+    icon: "hammer",
+    title: "Home improvements",
+    text: "Renovate, upgrade, repair, or expand your home while putting your equity back into the property.",
+  },
+  {
+    icon: "stack",
+    title: "Debt consolidation",
+    text: "Replace higher-interest balances with a more structured strategy and free up room in your monthly budget.",
+  },
+  {
+    icon: "building",
+    title: "Real estate investing",
+    text: "Use your equity for down payments, rehab capital, or reserves for your next investment move.",
+  },
+  {
+    icon: "briefcase",
+    title: "Business liquidity",
+    text: "Create flexible capital for growth, opportunity, cash flow, or strategic business needs.",
+  },
 ];
 
-const INELIGIBLE_STATES = ["Massachusetts", "New York"];
-
-function formatNumberInput(value) {
-  const digits = value.replace(/[^\d]/g, "");
-  if (!digits) return "";
-  return Number(digits).toLocaleString("en-US");
-}
-
-function parseCurrency(value) {
-  return Number(String(value || "").replace(/,/g, ""));
-}
-
-function formatCurrency(value) {
-  if (!Number.isFinite(value)) return "$0";
-  return value.toLocaleString("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  });
-}
-
-function getCreditMessage(creditRange) {
-  switch (creditRange) {
-    case "760+":
-      return "Excellent credit. You may qualify for some of the strongest HELOC pricing and options available, subject to final review.";
-    case "720-759":
-      return "Very solid credit. Many borrowers in this range are well positioned for competitive HELOC options.";
-    case "680-719":
-      return "You may still have strong options available, although pricing and terms can vary.";
-    case "640-679":
-      return "Approval may still be possible, but pricing and structure will depend more heavily on the overall file.";
-    case "Below 640":
-      return "Programs may be more limited, but a full review can help determine what may still be available.";
-    default:
-      return "Your credit estimate helps determine pricing, eligibility, and available options.";
-  }
-}
-
-function getEligibilityMessage(stateName) {
-  if (!stateName) return "";
-  if (INELIGIBLE_STATES.includes(stateName)) {
-    return `Properties located in ${stateName} do not qualify through this site.`;
-  }
-  return `Properties in ${stateName} may qualify, subject to product guidelines, underwriting, and state requirements.`;
-}
-
-function getFastFundingMessage(stateName) {
-  if (!stateName) {
-    return "Some borrowers may qualify for funding in as little as 5 business days without an appraisal, depending on property, state, remote online notarization availability, and final underwriting.";
-  }
-
-  if (INELIGIBLE_STATES.includes(stateName)) {
-    return `${stateName} properties are not eligible through this site, so fast-funding options are not available here.`;
-  }
-
-  if (QUICK_TURN_STATES.includes(stateName)) {
-    return `Properties in ${stateName} may qualify for funding in as little as 5 business days without an appraisal in some scenarios, depending on property review, county recording rules, remote online notarization eligibility, and underwriting.`;
-  }
-
-  return `Funding timelines in ${stateName} can vary based on state requirements, county recording rules, property type, title, and underwriting. Some files may still move quickly, but additional steps may be required.`;
-}
-
-function FAQItem({ question, answer, isOpen, onClick }) {
-  return (
-    <div className={`faq-item ${isOpen ? "open" : ""}`}>
-      <button className="faq-question" onClick={onClick} type="button">
-        <span>{question}</span>
-        <span className="faq-icon">{isOpen ? "−" : "+"}</span>
-      </button>
-      {isOpen && <div className="faq-answer">{answer}</div>}
-    </div>
-  );
-}
+// Guide list thumbnails (also each guide's social image, see routes.js).
+const GUIDE_META = {
+  "/how-a-heloc-works": {
+    photo: PHOTOS.paperwork,
+    kicker: "HELOC basics",
+    dek: "How much you can borrow, the draw and repayment periods, how the rate works, approval, and taxes.",
+  },
+  "/heloc-vs-cash-out-refinance": {
+    photo: PHOTOS.renovation,
+    kicker: "Compare your options",
+    dek: "What happens to your current mortgage, rates, costs, and payments with each option.",
+  },
+};
 
 export default function App() {
-  const [step, setStep] = useState(1);
-  const [homeValue, setHomeValue] = useState("");
-  const [mortgageOwed, setMortgageOwed] = useState("");
-  const [occupancyType, setOccupancyType] = useState("owner");
-  const [creditRange, setCreditRange] = useState("");
-  const [propertyState, setPropertyState] = useState("");
-  const [activeFaq, setActiveFaq] = useState(0);
-
-  const parsedHomeValue = parseCurrency(homeValue);
-  const parsedMortgageOwed = parseCurrency(mortgageOwed);
-
-  const maxLtv = occupancyType === "owner" ? 0.8 : 0.75;
-  const estimatedLine = Math.max(parsedHomeValue * maxLtv - parsedMortgageOwed, 0);
-  const isIneligibleState = INELIGIBLE_STATES.includes(propertyState);
-
-  const canContinueStep1 =
-    parsedHomeValue > 0 &&
-    parsedMortgageOwed >= 0 &&
-    parsedHomeValue > parsedMortgageOwed;
-
-  const canContinueStep2 = occupancyType && creditRange;
-
-  const resultSummary = useMemo(() => {
-    return {
-      homeValue: formatCurrency(parsedHomeValue),
-      mortgageOwed: formatCurrency(parsedMortgageOwed),
-      estimatedLine: formatCurrency(estimatedLine),
-      ltvLabel: occupancyType === "owner" ? "80%" : "75%",
-      propertyTypeLabel:
-        occupancyType === "owner" ? "Primary Residence" : "Investment Property",
-      creditMessage: getCreditMessage(creditRange),
-      fastFundingMessage: getFastFundingMessage(propertyState),
-      eligibilityMessage: getEligibilityMessage(propertyState),
-    };
-  }, [
-    parsedHomeValue,
-    parsedMortgageOwed,
-    estimatedLine,
-    occupancyType,
-    creditRange,
-    propertyState,
-  ]);
-
-  function nextStep() {
-    if (step === 1 && !canContinueStep1) return;
-    if (step === 2 && !canContinueStep2) return;
-    setStep((prev) => Math.min(prev + 1, 3));
-  }
-
-  function prevStep() {
-    setStep((prev) => Math.max(prev - 1, 1));
-  }
+  const calc = useEstimate();
+  const { summary, values, leadEstimate, isIneligibleState } = calc;
 
   return (
-    <div className="site-shell">
-      <header className="hero" id="top">
-        <div className="container">
-          <nav className="nav">
-            <a href="#top" className="brand brand-link">
-              <img
-                src="/logo.png"
-                alt="Unlock My Equity USA"
-                className="brand-logo"
-              />
-            </a>
+    <div className="site" id="top">
+      <a className="skip-link" href="#calculator">
+        Skip to the HELOC calculator
+      </a>
 
-            <div className="nav-links">
-              <a href="#calculator">Calculator</a>
-              <a href="#benefits">Benefits</a>
-              <a href="#uses">Uses</a>
-              <a href="#faq">FAQ</a>
-              <a href={GUIDES[0].path}>Guides</a>
-            </div>
+      {/* ---------- Masthead: headline + calculator ---------- */}
+      <div className="hero on-dark">
+        <SiteHeader home />
+        <div className="wrap hero-grid">
+          <div className="hero-head">
+            <p className="kicker">Home equity line of credit</p>
+            <h1>Get cash from your home equity. Keep your first mortgage.</h1>
+            <p className="hero-sub">
+              Estimate your HELOC from your home value and what you owe. No contact
+              details needed to see it.
+            </p>
+          </div>
 
-            <a className="nav-cta" href={PREAPPROVAL_LINK}>
-              Get Pre-Approved
-            </a>
-          </nav>
+          <Calculator calc={calc} />
 
-          <div className="hero-grid">
-            <div className="hero-copy">
-              <div className="eyebrow">Unlock the cash already in your home</div>
-              <h1>Access your equity without touching your low first mortgage.</h1>
-              <p className="hero-text">
-                Need cash for home improvements, debt payoff, investing, or major
-                expenses? A HELOC can give you fast access to your home’s equity so you
-                can move forward with confidence.
-              </p>
-
-              <div className="hero-highlights">
-                <div className="highlight-card">See your estimated borrowing power fast</div>
-                <div className="highlight-card">Keep your current first mortgage in place</div>
-                <div className="highlight-card">
-                  Get funded in as little as 5 business days in some scenarios
-                </div>
-              </div>
-
-              <p className="hero-disclaimer">
-                Fast-close and no-appraisal options depend on state, property type,
-                title, county recording rules, valuation eligibility, remote online
-                notarization availability, and final underwriting review.
-              </p>
-            </div>
-
-            <div className="calculator-panel" id="calculator">
-              <div className="calculator-top">
-                <div className="calculator-label">HELOC Calculator</div>
-                <h2>See how much cash you may be able to unlock</h2>
-                <p>
-                  Answer a few quick questions to estimate your available HELOC amount.
-                </p>
-              </div>
-
-              <div className="progress-bar-wrap">
-                {[1, 2, 3].map((item, index) => (
-                  <React.Fragment key={item}>
-                    <div className={`progress-dot ${step >= item ? "active" : ""}`}>
-                      {item}
-                    </div>
-                    {index < 2 && (
-                      <div className={`progress-line ${step > item ? "active" : ""}`} />
-                    )}
-                  </React.Fragment>
-                ))}
-              </div>
-
-              {step === 1 && (
-                <div className="step-panel">
-                  <div className="input-group">
-                    <label>What is your home worth?</label>
-                    <div className="currency-input">
-                      <span>$</span>
-                      <input
-                        type="text"
-                        inputMode="numeric"
-                        placeholder="500,000"
-                        value={homeValue}
-                        onChange={(e) => setHomeValue(formatNumberInput(e.target.value))}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="input-group">
-                    <label>How much do you still owe?</label>
-                    <div className="currency-input">
-                      <span>$</span>
-                      <input
-                        type="text"
-                        inputMode="numeric"
-                        placeholder="250,000"
-                        value={mortgageOwed}
-                        onChange={(e) =>
-                          setMortgageOwed(formatNumberInput(e.target.value))
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  <div className="helper-box">
-                    We’ll use these numbers to estimate how much equity you may be able
-                    to turn into available cash.
-                  </div>
-
-                  {!canContinueStep1 && homeValue && mortgageOwed && (
-                    <div className="warning-box">
-                      Your home value should be greater than your mortgage balance for a
-                      meaningful HELOC estimate.
-                    </div>
-                  )}
-                </div>
+          <div className="hero-more">
+            <ul className="ticks">
+              <li>
+                <Icon name="check" size={18} />
+                Your first mortgage, and its rate, stay in place
+              </li>
+              <li>
+                <Icon name="check" size={18} />
+                Funding in as little as 5 business days in some scenarios*
+              </li>
+              <li>
+                <Icon name="check" size={18} />
+                Checking your rate starts with a soft credit pull
+              </li>
+            </ul>
+            <p className="hero-foot">
+              *Fast-close and no-appraisal options depend on state, property type, title,
+              county recording rules, valuation eligibility, remote online notarization
+              availability, and final underwriting review.
+            </p>
+            <p className="hero-links">
+              {!isIneligibleState && (
+                <a href={PREAPPROVAL_LINK}>
+                  Get pre-approved online
+                  <Icon name="arrowRight" size={16} />
+                </a>
               )}
-
-              {step === 2 && (
-                <div className="step-panel">
-                  <div className="input-group">
-                    <label>What type of property do you have?</label>
-                    <div className="option-grid">
-                      <button
-                        type="button"
-                        className={`option-card ${
-                          occupancyType === "owner" ? "selected" : ""
-                        }`}
-                        onClick={() => setOccupancyType("owner")}
-                      >
-                        <strong>Primary Residence</strong>
-                        <span>Estimated max LTV: 80%</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        className={`option-card ${
-                          occupancyType === "investment" ? "selected" : ""
-                        }`}
-                        onClick={() => setOccupancyType("investment")}
-                      >
-                        <strong>Investment Property</strong>
-                        <span>Estimated max LTV: 75%</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="input-group">
-                    <label>What is your estimated credit score?</label>
-                    <select
-                      value={creditRange}
-                      onChange={(e) => setCreditRange(e.target.value)}
-                    >
-                      <option value="">Select a range</option>
-                      <option value="760+">760+</option>
-                      <option value="720-759">720-759</option>
-                      <option value="680-719">680-719</option>
-                      <option value="640-679">640-679</option>
-                      <option value="Below 640">Below 640</option>
-                    </select>
-                  </div>
-
-                  <div className="helper-box">
-                    Your credit profile helps determine your pricing, approval strength,
-                    and available HELOC options.
-                  </div>
-                </div>
-              )}
-
-              {step === 3 && (
-                <div className="step-panel">
-                  <div className="result-card">
-                    <div className="result-label">Estimated Available HELOC</div>
-                    <div className="result-value">{resultSummary.estimatedLine}</div>
-                    <p className="result-meta">
-                      Based on a {resultSummary.ltvLabel} estimated maximum LTV, a home
-                      value of {resultSummary.homeValue}, and current mortgage balances of{" "}
-                      {resultSummary.mortgageOwed}.
-                    </p>
-                  </div>
-
-                  <div className="summary-grid">
-                    <div className="summary-box">
-                      <span>Property Type</span>
-                      <strong>{resultSummary.propertyTypeLabel}</strong>
-                    </div>
-                    <div className="summary-box">
-                      <span>Credit Range</span>
-                      <strong>{creditRange || "Not selected"}</strong>
-                    </div>
-                  </div>
-
-                  <div className="input-group">
-                    <label>What state is the property in?</label>
-                    <select
-                      value={propertyState}
-                      onChange={(e) => setPropertyState(e.target.value)}
-                    >
-                      <option value="">Select your state</option>
-                      {STATES.map((state) => (
-                        <option key={state} value={state}>
-                          {state}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {propertyState && (
-                    <div className={isIneligibleState ? "warning-box" : "helper-box"}>
-                      <strong>Eligibility:</strong> {resultSummary.eligibilityMessage}
-                    </div>
-                  )}
-
-                  <div className="info-box">
-                    <strong>Fast funding note:</strong> {resultSummary.fastFundingMessage}
-                  </div>
-
-                  <div className="info-box muted">
-                    <strong>Credit insight:</strong> {resultSummary.creditMessage}
-                  </div>
-
-                  {!isIneligibleState ? (
-                    <a className="primary-cta full-width" href={PREAPPROVAL_LINK}>
-                      Get My HELOC Options
-                    </a>
-                  ) : (
-                    <div className="disabled-cta">
-                      This property state is not eligible through this site.
-                    </div>
-                  )}
-
-                  <p className="fine-print">
-                    Estimates are for educational purposes only. Final line amount,
-                    eligibility, pricing, timing, and appraisal requirements depend on
-                    lender guidelines, state eligibility, title, valuation method, credit,
-                    property review, and underwriting.
-                  </p>
-                </div>
-              )}
-
-              <div className="calculator-actions">
-                <button
-                  type="button"
-                  className="secondary-btn"
-                  onClick={prevStep}
-                  disabled={step === 1}
-                >
-                  Back
-                </button>
-
-                {step < 3 && (
-                  <button
-                    type="button"
-                    className="primary-btn"
-                    onClick={nextStep}
-                    disabled={
-                      (step === 1 && !canContinueStep1) ||
-                      (step === 2 && !canContinueStep2)
-                    }
-                  >
-                    Continue
-                  </button>
-                )}
-              </div>
-            </div>
+              <a href={PHONE.href}>
+                Call or text {PHONE.display}
+                <Icon name="arrowRight" size={16} />
+              </a>
+            </p>
           </div>
         </div>
-      </header>
+      </div>
 
       <main>
-        <section className="trust-section" id="benefits">
-          <div className="container">
-            <div className="section-heading centered">
-              <div className="eyebrow dark">Why homeowners choose a HELOC</div>
-              <h2>Turn your home equity into flexible cash when you need it most</h2>
-              <p>
-                Your equity can do more than sit there. Use it to fund the projects,
-                opportunities, and financial moves that matter most to you.
-              </p>
-            </div>
+        {/* ---------- Lead form ---------- */}
+        <section className="band band-ice" id="next-step" aria-labelledby="lead-title">
+          <div className="narrow">
+            <p className="kicker">Next step</p>
+            <h2 id="lead-title">Talk through your numbers</h2>
+            <p className="lede">
+              Send your details and Andres will personally reach out. No pressure at
+              all.
+            </p>
 
-            <div className="trust-grid">
-              <div className="trust-card">
-                <h3>Access More Cash</h3>
-                <p>
-                  Put the equity in your property to work and create borrowing power you
-                  can actually use.
-                </p>
-              </div>
-              <div className="trust-card">
-                <h3>Move Fast</h3>
-                <p>
-                  Some borrowers may qualify for fast approvals and funding in as little
-                  as 5 business days.
-                </p>
-              </div>
-              <div className="trust-card">
-                <h3>Keep Your Existing Mortgage</h3>
-                <p>
-                  Access cash without replacing the first mortgage you already worked hard
-                  to get.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="uses-section" id="uses">
-          <div className="container">
-            <div className="section-heading centered">
-              <div className="eyebrow dark">Popular ways borrowers use a HELOC</div>
-              <h2>Use your equity for something that actually moves you forward</h2>
-              <p>
-                A HELOC can be a smart financial tool when you use it for goals that
-                create value, improve cash flow, or strengthen your overall position.
-              </p>
-            </div>
-
-            <div className="uses-grid">
-              <div className="use-card">
-                <div className="use-icon">🏡</div>
-                <h3>Home Improvements</h3>
-                <p>
-                  Renovate, upgrade, repair, or expand your home while putting your
-                  equity back into the property.
-                </p>
-              </div>
-
-              <div className="use-card">
-                <div className="use-icon">💳</div>
-                <h3>Debt Consolidation</h3>
-                <p>
-                  Replace higher-interest balances with a more structured strategy and
-                  free up room in your monthly budget.
-                </p>
-              </div>
-
-              <div className="use-card">
-                <div className="use-icon">📈</div>
-                <h3>Real Estate Investing</h3>
-                <p>
-                  Use your equity for down payments, rehab capital, or reserves for your
-                  next investment move.
-                </p>
-              </div>
-
-              <div className="use-card">
-                <div className="use-icon">💼</div>
-                <h3>Business Liquidity</h3>
-                <p>
-                  Create flexible capital for growth, opportunity, cash flow, or strategic
-                  business needs.
-                </p>
-              </div>
-            </div>
-
-            <div className="avoid-box">
-              <h3>Use your equity wisely</h3>
-              <p>
-                We generally do <strong>not</strong> recommend using a HELOC for a car,
-                a vacation, or short-term lifestyle spending. Since your home secures the
-                line, it is usually better used for things that create lasting value or
-                improve your financial position.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <section className="speed-section" id="borrow-better">
-          <div className="container speed-grid">
-            <div>
-              <div className="eyebrow dark">A better way to borrow</div>
-              <h2>Get the money you need without starting your mortgage over</h2>
-              <p className="section-copy">
-                If you already have a strong first mortgage, a HELOC can let you access
-                cash without refinancing out of it. That can make a huge difference in
-                today’s rate environment.
-              </p>
-            </div>
-
-            <div className="feature-stack">
-              <div className="feature-card">
-                <div className="feature-number">01</div>
-                <div>
-                  <h3>Fast approval potential</h3>
-                  <p>
-                    Some files may move quickly, with approval decisions in minutes and
-                    fast funding in qualifying scenarios.
-                  </p>
+            {leadEstimate ? (
+              <div className="carry" aria-label="Your estimate, included with this request">
+                <div className="carry-main">
+                  <span className="carry-label">Your estimate, included</span>
+                  <span className="carry-value">{summary.estimatedLine}</span>
                 </div>
-              </div>
-
-              <div className="feature-card">
-                <div className="feature-number">02</div>
-                <div>
-                  <h3>No-appraisal scenarios may be available</h3>
-                  <p>
-                    In certain cases, your file may qualify for a valuation method that
-                    avoids a traditional appraisal.
-                  </p>
-                </div>
-              </div>
-
-              <div className="feature-card">
-                <div className="feature-number">03</div>
-                <div>
-                  <h3>Flexible access to your borrowing power</h3>
-                  <p>
-                    Use your equity to create breathing room, seize opportunities, or
-                    tackle larger financial goals with more confidence.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="lead-section" id="next-step">
-          <div className="container">
-            <div className="lead-box">
-              <div className="lead-copy">
-                <div className="eyebrow">Take the next step</div>
-                <h2>See what your home equity may be able to do for you.</h2>
-                <p>
-                  If you have equity in your property, now is the time to see how much
-                  you may be able to access and what your HELOC options may look like.
+                <dl className="carry-facts">
+                  <div>
+                    <dt>Home value</dt>
+                    <dd>{summary.homeValue}</dd>
+                  </div>
+                  <div>
+                    <dt>Owed</dt>
+                    <dd>{summary.mortgageOwed}</dd>
+                  </div>
+                  <div>
+                    <dt>Type</dt>
+                    <dd>{summary.propertyTypeLabel}</dd>
+                  </div>
+                  <div>
+                    <dt>Credit</dt>
+                    <dd>{values.creditRange}</dd>
+                  </div>
+                </dl>
+                <p className="carry-note">
+                  Illustrative estimate only. Not a commitment to lend.
                 </p>
+                <a className="carry-edit" href="#calculator">
+                  Edit
+                </a>
               </div>
+            ) : (
+              <p className="carry carry-empty">
+                <Icon name="info" size={18} />
+                <span>
+                  Optional: <a href="#calculator">run the calculator</a> and pick a credit
+                  range, and your estimate is included with your request.
+                </span>
+              </p>
+            )}
 
-              <div className="lead-form-card">
-                <LeadForm
-                  estimate={
-                    parsedHomeValue > 0 && creditRange
-                      ? { ...resultSummary, creditRange }
-                      : null
-                  }
-                />
-              </div>
+            <div className="panel">
+              <LeadForm estimate={leadEstimate} suggestedState={values.propertyState} />
             </div>
           </div>
         </section>
 
-        <section className="faq-section" id="faq">
-          <div className="container">
-            <div className="section-heading centered">
-              <div className="eyebrow dark">Frequently asked questions</div>
-              <h2>What borrowers want to know before they move forward</h2>
-              <p>
-                Here are some of the most common questions homeowners ask before getting
-                pre-approved for a HELOC.
-              </p>
+        {/* ---------- How it works ---------- */}
+        <section className="band" id="how-it-works" aria-labelledby="how-title">
+          <div className="wrap">
+            <div className="band-head">
+              <p className="kicker">How it works</p>
+              <h2 id="how-title">Three steps, at your pace</h2>
             </div>
-
-            <div className="faq-list">
-              {FAQS.map((faq, index) => (
-                <FAQItem
-                  key={faq.question}
-                  question={faq.question}
-                  answer={faq.answer}
-                  isOpen={activeFaq === index}
-                  onClick={() => setActiveFaq(activeFaq === index ? -1 : index)}
-                />
+            <ol className="steps">
+              {HOW_STEPS.map((s, i) => (
+                <li key={s.title}>
+                  <span className="step-num" aria-hidden="true">
+                    0{i + 1}
+                  </span>
+                  <h3>{s.title}</h3>
+                  <p>{s.text}</p>
+                </li>
               ))}
+            </ol>
+          </div>
+        </section>
+
+        {/* ---------- Ways to use equity ---------- */}
+        <section className="band band-ice" id="uses" aria-labelledby="uses-title">
+          {/* id="benefits" keeps older /#benefits campaign links working. */}
+          <div className="wrap uses" id="benefits">
+            <figure className="uses-photo">
+              <Photo
+                photo={PHOTOS.home}
+                sizes="(min-width: 1024px) 440px, calc(100vw - 32px)"
+              />
+            </figure>
+            <div className="uses-body">
+              <p className="kicker">Ways homeowners use equity</p>
+              <h2 id="uses-title">Put it toward things that last</h2>
+              <p className="lede">
+                A HELOC can be a smart tool when it creates value, improves cash flow, or
+                strengthens your overall position.
+              </p>
+              <ul className="uses-list">
+                {USES.map((u) => (
+                  <li key={u.title}>
+                    <span className="uses-icon" aria-hidden="true">
+                      <Icon name={u.icon} size={22} />
+                    </span>
+                    <div>
+                      <h3>{u.title}</h3>
+                      <p>{u.text}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              <p className="notice notice-info uses-wise">
+                <Icon name="shield" size={18} />
+                <span>
+                  We generally do <strong>not</strong> recommend using a HELOC for a car,
+                  a vacation, or short-term lifestyle spending. Since your home secures
+                  the line, it is usually better used for things that create lasting
+                  value or improve your financial position.
+                </span>
+              </p>
             </div>
           </div>
         </section>
 
-        <section className="final-cta-section">
-          <div className="container">
-            <div className="final-cta-card">
-              <div>
-                <div className="eyebrow light">Ready to unlock your cash?</div>
-                <h2>Get pre-approved for your HELOC today.</h2>
-                <p>
-                  Find out how much you may be able to access and take the next step
-                  toward using your home equity with confidence.
-                </p>
-              </div>
-              <a className="light-cta" href={PREAPPROVAL_LINK}>
-                Get My HELOC Options
+        {/* ---------- HELOC vs refinance ---------- */}
+        <section className="band compare on-dark" id="borrow-better" aria-labelledby="compare-title">
+          <div className="compare-photo" aria-hidden="true">
+            <Photo photo={PHOTOS.home} alt="" sizes="(min-width: 1024px) 60vw, 100vw" />
+          </div>
+          <div className="wrap compare-inner">
+            <div className="compare-copy">
+              <p className="kicker">A better way to borrow</p>
+              <h2 id="compare-title">Get cash without starting your mortgage over</h2>
+              <p>
+                If you already have a strong first mortgage, a HELOC can let you access
+                cash without refinancing out of it. That can make a big difference in
+                today's rate environment.
+              </p>
+            </div>
+            <div className="panel compare-panel">
+              <table className="table">
+                <caption className="sr-only">HELOC compared with a cash-out refinance</caption>
+                <thead>
+                  <tr>
+                    <td></td>
+                    <th scope="col">HELOC</th>
+                    <th scope="col">Cash-out refi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">Your current mortgage</th>
+                    <td>Stays in place, rate and all</td>
+                    <td>Paid off and replaced</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">New rate applies to</th>
+                    <td>
+                      What you draw on the line. Some HELOCs, including the one
+                      offered here, draw the full line at origination.
+                    </td>
+                    <td>Your entire new balance</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Which costs less</th>
+                    <td colSpan={2}>
+                      Depends on your rates, fees and total borrowing costs for each
+                      option.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <a className="link-arrow" href="/heloc-vs-cash-out-refinance">
+                Read the full comparison
+                <Icon name="arrowRight" size={16} />
               </a>
             </div>
           </div>
         </section>
+
+        {/* ---------- FAQ ---------- */}
+        <section className="band band-flush" id="faq" aria-labelledby="faq-title">
+          <div className="wrap band-head">
+            <p className="kicker">Frequently asked questions</p>
+            <h2 id="faq-title">Before you move forward</h2>
+            <p className="lede">
+              Still curious? Call or text <a href={PHONE.href}>{PHONE.display}</a>.
+            </p>
+          </div>
+          <div className="rows">
+            {FAQS.map((faq) => (
+              <details key={faq.question} className="row">
+                <summary>
+                  <span className="wrap row-q">
+                    <span>{faq.question}</span>
+                    <Icon name="plus" size={20} className="row-icon" />
+                  </span>
+                </summary>
+                <div className="wrap row-a">
+                  <p>{faq.answer}</p>
+                </div>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        {/* ---------- Guides ---------- */}
+        <section className="band" id="guides" aria-labelledby="guides-title">
+          <div className="wrap">
+            <div className="band-head">
+              <p className="kicker">Guides</p>
+              <h2 id="guides-title">Read before you borrow</h2>
+            </div>
+            <ul className="editorial">
+              {GUIDES.map((g) => {
+                const meta = GUIDE_META[g.path];
+                return (
+                  <li key={g.path}>
+                    <a href={g.path} className="ed-item">
+                      <span className="ed-thumb">
+                        <Photo
+                          photo={meta.photo}
+                          alt=""
+                          sizes="(min-width: 1024px) 280px, (min-width: 640px) 200px, 112px"
+                        />
+                      </span>
+                      <span className="ed-text">
+                        <span className="ed-kicker">{meta.kicker}</span>
+                        <span className="ed-title">{g.label}</span>
+                        <span className="ed-dek">{meta.dek}</span>
+                      </span>
+                      <Icon name="arrowRight" size={22} className="ed-arrow" />
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </section>
       </main>
 
-      <Footer />
+      <Footer home />
     </div>
   );
 }

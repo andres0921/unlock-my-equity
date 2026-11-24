@@ -51,3 +51,56 @@ export const FAQS = [
       "Checking your options may involve a soft credit pull that does not affect your score. If you move forward and complete a full application, a hard credit inquiry may be required.",
   },
 ];
+
+// Full state names. The value sent with a lead is the full name.
+export const STATES = [
+  "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado",
+  "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois",
+  "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland",
+  "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana",
+  "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York",
+  "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania",
+  "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah",
+  "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming",
+];
+
+export const QUICK_TURN_STATES = [
+  "Arizona",
+  "California",
+  "Colorado",
+  "Florida",
+  "Idaho",
+  "Nevada",
+  "Oregon",
+  "Texas",
+  "Utah",
+  "Washington",
+];
+
+// Properties in these states cannot be served through this site.
+export const INELIGIBLE_STATES = ["Massachusetts", "New York"];
+
+/** Photos in /public/images, each shipped at 480, 768 and 1024 px wide. */
+export const PHOTOS = {
+  home: {
+    name: "b-home-bluehour",
+    widths: [480, 768, 1024],
+    width: 1024,
+    height: 576,
+    alt: "A modern charcoal-sided home with warmly lit windows at blue hour.",
+  },
+  paperwork: {
+    name: "b-paperwork",
+    widths: [480, 768, 1024],
+    width: 1024,
+    height: 768,
+    alt: "Hands writing on a stack of blank paper on a slate desk, next to a coffee mug and a closed laptop.",
+  },
+  renovation: {
+    name: "b-renovation",
+    widths: [480, 768, 1024],
+    width: 1024,
+    height: 768,
+    alt: "A yellow tape measure resting on an unfinished concrete kitchen counter in front of open cabinet frames.",
+  },
+};

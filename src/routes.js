@@ -1,11 +1,19 @@
 import App from "./App";
 import { HelocVsCashOut, HowAHelocWorks } from "./Guides";
 import { HOW_HELOC_FAQS, VS_REFI_FAQS } from "./guideFaqs";
-import { FAQS, SITE_NAME, SITE_URL } from "./site";
+import { FAQS, PHOTOS, SITE_NAME, SITE_URL } from "./site";
 
 export { SITE_URL };
 
 const LOGO = `${SITE_URL}/logo.png`;
+
+// Social preview image for a route: the largest webp of a photo in site.js.
+const og = (photo) => ({
+  src: `/images/${photo.name}-${photo.widths[photo.widths.length - 1]}.webp`,
+  width: photo.width,
+  height: photo.height,
+  alt: photo.alt,
+});
 
 const person = {
   "@type": "Person",
@@ -64,7 +72,8 @@ const article = (path, headline, description) => ({
 
 /**
  * Every page on the site. Each is pre-rendered at build time to dist/<file>
- * with its own title, description, canonical and schema (see prerender.js),
+ * with its own title, description, canonical, social image and schema (see
+ * prerender.js),
  * and the browser hydrates the matching component (see main.jsx).
  */
 export const routes = [
@@ -77,6 +86,7 @@ export const routes = [
     ogDescription:
       "Estimate your HELOC in under a minute and access your home equity without refinancing your first mortgage.",
     Component: App,
+    ogImage: og(PHOTOS.home),
     jsonLd: [organization, faqPage(FAQS)],
   },
   {
@@ -86,6 +96,7 @@ export const routes = [
     description:
       "A plain-English guide to home equity lines of credit: how much you can borrow, the draw and repayment periods, how the rate works, what it takes to get approved, and the tax rules.",
     Component: HowAHelocWorks,
+    ogImage: og(PHOTOS.paperwork),
     jsonLd: [
       article(
         "/how-a-heloc-works",
@@ -106,6 +117,7 @@ export const routes = [
     description:
       "Compare a HELOC and a cash-out refinance side by side: what happens to your current mortgage and rate, up-front costs, payments, and when each one makes sense.",
     Component: HelocVsCashOut,
+    ogImage: og(PHOTOS.renovation),
     jsonLd: [
       article(
         "/heloc-vs-cash-out-refinance",

@@ -1,6 +1,8 @@
+import { Children } from "react";
 import { Footer } from "./Footer";
 import { LeadForm } from "./LeadForm";
-import { GUIDES, PREAPPROVAL_LINK } from "./site";
+import { GUIDES, PHOTOS, PREAPPROVAL_LINK } from "./site";
+import { Icon, Photo, SiteHeader } from "./ui";
 import { HOW_HELOC_FAQS, VS_REFI_FAQS } from "./guideFaqs";
 
 const SOURCES = {
@@ -18,65 +20,73 @@ const SOURCES = {
   },
 };
 
-function GuideLayout({ eyebrow, title, intro, children, sources, current }) {
+function GuideLayout({ eyebrow, title, intro, children, sources, current, photo }) {
   return (
-    <div className="site-shell">
-      <header className="hero guide-hero" id="top">
-        <div className="container">
-          <nav className="nav">
-            <a href="/" className="brand brand-link">
-              <img src="/logo.png" alt="Unlock My Equity USA" className="brand-logo" />
-            </a>
-            <div className="nav-links">
-              <a href="/#calculator">Calculator</a>
-              {GUIDES.map((g) => (
-                <a
-                  key={g.path}
-                  href={g.path}
-                  aria-current={g.path === current ? "page" : undefined}
-                >
-                  {g.label}
-                </a>
-              ))}
-              <a href="/#faq">FAQ</a>
-            </div>
-            <a className="nav-cta" href={PREAPPROVAL_LINK}>
-              Get Pre-Approved
-            </a>
+    <div className="site" id="top">
+      <a className="skip-link" href="#article">
+        Skip to the guide
+      </a>
+      <div className="guide-mast on-dark">
+        <SiteHeader current={current} />
+        <div className="wrap guide-mast-inner">
+          <nav className="crumbs" aria-label="Breadcrumb">
+            <ol>
+              <li>
+                <a href="/">Home</a>
+              </li>
+              <li aria-current="page">{GUIDES.find((g) => g.path === current)?.label}</li>
+            </ol>
           </nav>
-
-          <div className="guide-heading">
-            <div className="eyebrow">{eyebrow}</div>
-            <h1>{title}</h1>
-            <p className="hero-text">{intro}</p>
+          <p className="kicker">{eyebrow}</p>
+          <h1>{title}</h1>
+          <p className="hero-sub">{intro}</p>
+          <div className="guide-actions">
+            <a className="btn btn-primary" href="/#calculator">
+              Estimate my HELOC
+              <Icon name="arrowRight" size={18} />
+            </a>
+            <a className="btn btn-outline-lime" href={PREAPPROVAL_LINK}>
+              Get pre-approved
+            </a>
           </div>
         </div>
-      </header>
+      </div>
 
       <main>
-        <article className="container guide-body">{children}</article>
+        <article className="guide-body" id="article" tabIndex={-1}>
+          {/* The photo follows the opening section so it stays below the fold. */}
+          {Children.toArray(children).flatMap((child, i) =>
+            i === 1
+              ? [
+                  <figure className="guide-figure" key="figure">
+                    <Photo
+                      photo={photo}
+                      sizes="(min-width: 800px) 720px, calc(100vw - 32px)"
+                    />
+                  </figure>,
+                  child,
+                ]
+              : [child]
+          )}
+        </article>
 
-        <section className="lead-section" id="next-step">
-          <div className="container">
-            <div className="lead-box">
-              <div className="lead-copy">
-                <div className="eyebrow">Take the next step</div>
-                <h2>Want to see what your numbers look like?</h2>
-                <p>
-                  Run the <a href="/#calculator">HELOC calculator</a> for a quick
-                  estimate, or send me your details and we'll take a step back and look
-                  at your options together. No pressure at all.
-                </p>
-              </div>
-              <div className="lead-form-card">
-                <LeadForm />
-              </div>
+        <section className="band band-ice" id="next-step" aria-labelledby="guide-lead-title">
+          <div className="narrow">
+            <p className="kicker">Take the next step</p>
+            <h2 id="guide-lead-title">Want to see what your numbers look like?</h2>
+            <p className="lede">
+              Run the <a href="/#calculator">HELOC calculator</a> for a quick estimate, or
+              send me your details and we'll take a step back and look at your options
+              together. No pressure at all.
+            </p>
+            <div className="panel">
+              <LeadForm />
             </div>
           </div>
         </section>
 
-        <section className="container guide-sources">
-          <h2>Sources</h2>
+        <section className="guide-sources" aria-labelledby="sources-title">
+          <h2 id="sources-title">Sources</h2>
           <ul>
             {sources.map((s) => (
               <li key={s.href}>
@@ -86,7 +96,7 @@ function GuideLayout({ eyebrow, title, intro, children, sources, current }) {
               </li>
             ))}
           </ul>
-          <p className="fine-print">
+          <p className="fine">
             This guide is general education, not tax or legal advice. Loan programs,
             limits, and pricing vary by lender, state, and borrower and can change.
           </p>
@@ -98,11 +108,11 @@ function GuideLayout({ eyebrow, title, intro, children, sources, current }) {
   );
 }
 
-
 export function HowAHelocWorks() {
   return (
     <GuideLayout
       current="/how-a-heloc-works"
+      photo={PHOTOS.paperwork}
       eyebrow="HELOC basics"
       title="How a HELOC works, in plain English"
       intro="A home equity line of credit lets you borrow against the equity you've built, without replacing the mortgage you already have. Here's how it actually works, step by step."
@@ -221,6 +231,7 @@ export function HelocVsCashOut() {
   return (
     <GuideLayout
       current="/heloc-vs-cash-out-refinance"
+      photo={PHOTOS.renovation}
       eyebrow="Compare your options"
       title="HELOC vs. cash-out refinance: which fits you?"
       intro="Both turn your home equity into cash. The biggest difference is what happens to the mortgage you already have, and that one detail can change the whole math."

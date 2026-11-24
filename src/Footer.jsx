@@ -1,20 +1,94 @@
+import { useEffect, useState } from "react";
 import {
   GUIDES,
   NMLS_CONSUMER_ACCESS_LINK,
+  PHONE,
   PREAPPROVAL_LINK,
   PRIVACY_POLICY_LINK,
   SITE_NAME,
   TERMS_OF_SERVICE_LINK,
   TEXAS_NOTICE_LINK,
 } from "./site";
+import { Icon } from "./ui";
 
-export function Footer() {
+const FIELD_SELECTOR = "input, select, textarea";
+const ACTION_SELECTOR = [
+  ".calc-inputs .money",
+  ".calc-act .btn",
+  ".calc-act .btn-disabled",
+  ".hero-links",
+  ".guide-mast .btn",
+  "#next-step .panel",
+  ".site-footer",
+].join(", ");
+
+/**
+ * Mobile-only sticky CTA. It stays out of the way while the calculator inputs
+ * or buttons, a page CTA, the lead form or the footer disclosures are on screen, and while any form field
+ * has focus (so it never sits on top of the on-screen keyboard).
+ */
+function StickyCta({ home }) {
+  const [inView, setInView] = useState(true);
+  const [typing, setTyping] = useState(false);
+
+  useEffect(() => {
+    const onIn = (e) => setTyping(Boolean(e.target.closest?.(FIELD_SELECTOR)));
+    const onOut = () => setTyping(false);
+    document.addEventListener("focusin", onIn);
+    document.addEventListener("focusout", onOut);
+
+    let io;
+    if (typeof IntersectionObserver !== "undefined") {
+      // Hide only while a real action control is on screen (the calculator's
+      // money inputs and buttons, the hero/guide CTAs, the lead form), plus the
+      // footer disclosures. Watching whole sections hid it for far too long.
+      const targets = Array.from(document.querySelectorAll(ACTION_SELECTOR));
+      const visible = new Set();
+      io = new IntersectionObserver((entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) visible.add(e.target);
+          else visible.delete(e.target);
+        }
+        setInView(visible.size > 0);
+      });
+      targets.forEach((t) => io.observe(t));
+    }
+    return () => {
+      document.removeEventListener("focusin", onIn);
+      document.removeEventListener("focusout", onOut);
+      io?.disconnect();
+    };
+  }, []);
+
+  const hidden = inView || typing;
+  return (
+    <div className={`sticky-cta ${hidden ? "is-hidden" : ""}`} aria-hidden={hidden || undefined}>
+      <a
+        className="btn btn-primary"
+        href={home ? "#calculator" : "/#calculator"}
+        tabIndex={hidden ? -1 : undefined}
+      >
+        Estimate my HELOC
+      </a>
+      <a
+        className="sticky-call"
+        href={PHONE.href}
+        aria-label={`Call or text ${PHONE.display}`}
+        tabIndex={hidden ? -1 : undefined}
+      >
+        <Icon name="phone" size={20} />
+      </a>
+    </div>
+  );
+}
+
+export function Footer({ home = false }) {
   return (
     <>
       <footer className="site-footer" id="footer">
-        <div className="container footer-grid">
+        <div className="wrap footer-grid">
           <div className="footer-column footer-brand-column">
-            <h3>{SITE_NAME}</h3>
+            <h2 className="footer-title">{SITE_NAME}</h2>
             <div className="footer-license-list">
               <div>NEXA Mortgage</div>
               <div>Corporate NMLS #1660690</div>
@@ -30,7 +104,7 @@ export function Footer() {
           </div>
 
           <div className="footer-column">
-            <h4>Guides</h4>
+            <h3>Guides</h3>
             <div className="footer-links">
               <a href="/#calculator">HELOC Calculator</a>
               {GUIDES.map((g) => (
@@ -38,9 +112,10 @@ export function Footer() {
                   {g.label}
                 </a>
               ))}
+              <a href={PREAPPROVAL_LINK}>Get Pre-Approved</a>
             </div>
 
-            <h4 className="footer-subhead">Legal</h4>
+            <h3 className="footer-subhead">Legal</h3>
             <div className="footer-links">
               <a href={PRIVACY_POLICY_LINK} target="_blank" rel="noreferrer">
                 Privacy Policy
@@ -58,7 +133,7 @@ export function Footer() {
           </div>
 
           <div className="footer-column">
-            <h4>Licensing</h4>
+            <h3>Licensing</h3>
             <div className="footer-license-list">
               <div>NEXA Mortgage</div>
               <div>Corporate NMLS: #1660690</div>
@@ -66,10 +141,14 @@ export function Footer() {
               <div>5559 S Sossaman Rd Bldg #1 Ste #101</div>
               <div>Mesa AZ 85212</div>
             </div>
+            <a className="footer-phone" href={PHONE.href}>
+              <Icon name="phone" size={16} />
+              {PHONE.display}
+            </a>
           </div>
         </div>
 
-        <div className="container footer-disclosure-block">
+        <div className="wrap footer-disclosure-block">
           <p>
             This site is not authorized by the New York State Department of Financial
             Services. No mortgage loan applications for properties located in the State
@@ -111,14 +190,16 @@ export function Footer() {
           </p>
         </div>
 
-        <div className="container footer-bottom">
+        <div className="wrap footer-bottom">
           <div>© {new Date().getFullYear()} Unlock My Equity USA. All rights reserved.</div>
+          <div className="eho">
+            <Icon name="home" size={18} />
+            Equal Housing Opportunity
+          </div>
         </div>
       </footer>
 
-      <a href={PREAPPROVAL_LINK} className="mobile-sticky-cta">
-        Get My HELOC Options
-      </a>
+      <StickyCta home={home} />
     </>
   );
 }
