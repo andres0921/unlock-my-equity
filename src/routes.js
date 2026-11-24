@@ -88,10 +88,10 @@ export const routes = [
       "A plain-English guide to home equity lines of credit: how much you can borrow, the draw and repayment periods, how the rate works, what it takes to get approved, and the tax rules.",
     Component: HowAHelocWorks,
     ogImage: {
-      src: "/images/c-remodel-1024.webp",
+      src: "/images/c3-materials-1024.webp",
       width: 1024,
       height: 768,
-      alt: "Paper-cut illustration of a sunny room with tile samples, a measuring tape, and a paint roller",
+      alt: "Gouache illustration of hands arranging a wood sample, tile, and paint swatches",
     },
     jsonLd: [
       article(
@@ -114,10 +114,10 @@ export const routes = [
       "Compare a HELOC and a cash-out refinance side by side: what happens to your current mortgage and rate, up-front costs, payments, and when each one makes sense.",
     Component: HelocVsCashOut,
     ogImage: {
-      src: "/images/c-planning-1024.webp",
+      src: "/images/c3-patio-wide-1024.webp",
       width: 1024,
       height: 768,
-      alt: "Paper-cut illustration of a kitchen table with a blank planning sheet and a pencil",
+      alt: "Gouache illustration of stepping stones leading through a garden to a small patio",
     },
     jsonLd: [
       article(

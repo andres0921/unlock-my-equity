@@ -58,8 +58,9 @@ function GuideLayout({ eyebrow, title, intro, children, sources, current, art })
               <Illo
                 name={art.name}
                 alt={art.alt}
+                square={art.square}
                 eager
-                sizes="(min-width: 900px) 460px, calc(100vw - 32px)"
+                sizes="(min-width: 900px) min(502px, calc((100vw - 120px) * 0.465)), (min-width: 640px) calc(100vw - 48px), calc(100vw - 32px)"
               />
             </div>
           </div>
@@ -69,7 +70,7 @@ function GuideLayout({ eyebrow, title, intro, children, sources, current, art })
           {children}
         </article>
 
-        <section className="band band-peach" aria-labelledby="guide-lead-title">
+        <section className="band band-deep band-curved" aria-labelledby="guide-lead-title">
           <div className="container narrow">
             <div className="section-head">
               <p className="eyebrow">Take the next step</p>
@@ -115,8 +116,8 @@ export function HowAHelocWorks() {
     <GuideLayout
       current="/how-a-heloc-works"
       art={{
-        name: "c-remodel",
-        alt: "Paper-cut illustration of a sunny room with tile samples, a measuring tape, and a paint roller ready for a remodel.",
+        name: "c3-materials",
+        alt: "Gouache illustration of two hands arranging a wood sample, a sage tile sheet, and paint swatches on a table framed by garden leaves.",
       }}
       eyebrow="HELOC basics"
       title="How a HELOC works, in plain English"
@@ -237,8 +238,8 @@ export function HelocVsCashOut() {
     <GuideLayout
       current="/heloc-vs-cash-out-refinance"
       art={{
-        name: "c-planning",
-        alt: "Paper-cut illustration of a kitchen table with a blank planning sheet, a pencil, a plant, and a cup of coffee.",
+        name: "c3-patio-wide",
+        alt: "Gouache illustration seen from above of round stepping stones leading through a garden to a small patio with two chairs.",
       }}
       eyebrow="Compare your options"
       title="HELOC vs. cash-out refinance: which fits you?"

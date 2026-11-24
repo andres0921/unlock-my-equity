@@ -241,16 +241,16 @@ export default function App() {
         <section className="hero" aria-labelledby="hero-title">
           {/* Desktop-only accents: hidden (and, being lazy, never fetched) on phones. */}
           <Illo
-            name="c-bungalow"
+            name="c3-house"
             square
             className="hero-art hero-art-house"
-            sizes="300px"
+            sizes="min(300px, calc(50vw - 324px))"
           />
           <Illo
-            name="c-swatches"
+            name="c3-patio"
             square
-            className="hero-art hero-art-swatches"
-            sizes="260px"
+            className="hero-art hero-art-patio"
+            sizes="min(260px, calc(50vw - 324px))"
           />
 
           <div className="container hero-inner">
@@ -293,9 +293,9 @@ export default function App() {
           </div>
         </section>
 
-        {/* ---------------- Calculator (peach band) ---------------- */}
+        {/* ---------------- Calculator (deeper mint band, curved edges) ---------------- */}
         <section
-          className="band band-peach"
+          className="band band-deep band-curved"
           id="calculator"
           tabIndex={-1}
           aria-labelledby="calc-title"
@@ -656,8 +656,8 @@ export default function App() {
           </div>
         </section>
 
-        {/* ---------------- Ways to use equity (sky band) ---------------- */}
-        <section className="band band-sky" id="uses" aria-labelledby="uses-title">
+        {/* ---------------- Ways to use equity (deeper mint band, curved edges) ---------------- */}
+        <section className="band band-deep band-curved is-mirrored" id="uses" aria-labelledby="uses-title">
           {/* id="benefits" keeps old /#benefits campaign links working. */}
           <div className="container" id="benefits">
             <div className="section-head">
@@ -703,9 +703,9 @@ export default function App() {
               <article className="guide-row">
                 <div className="guide-row-art">
                   <Illo
-                    name="c-remodel"
-                    alt="Paper-cut illustration of a sunny room with tile samples, a measuring tape, and a paint roller ready for a remodel."
-                    sizes="(min-width: 900px) 540px, calc(100vw - 32px)"
+                    name="c3-materials"
+                    alt="Gouache illustration of two hands arranging a wood sample, a sage tile sheet, and paint swatches on a table framed by garden leaves."
+                    sizes="(min-width: 900px) min(536px, calc((100vw - 120px) * 0.524)), (min-width: 640px) calc(100vw - 48px), calc(100vw - 32px)"
                   />
                 </div>
                 <div className="guide-row-copy">
@@ -726,9 +726,9 @@ export default function App() {
               <article className="guide-row is-flipped" id="borrow-better">
                 <div className="guide-row-art">
                   <Illo
-                    name="c-planning"
-                    alt="Paper-cut illustration of a kitchen table with a blank planning sheet, a pencil, a plant, and a cup of coffee."
-                    sizes="(min-width: 900px) 540px, calc(100vw - 32px)"
+                    name="c3-patio-wide"
+                    alt="Gouache illustration seen from above of round stepping stones leading through a garden to a small patio with two chairs."
+                    sizes="(min-width: 900px) min(488px, calc((100vw - 120px) * 0.476)), (min-width: 640px) calc(100vw - 48px), calc(100vw - 32px)"
                   />
                 </div>
                 <div className="guide-row-copy">
@@ -750,7 +750,7 @@ export default function App() {
         </section>
 
         {/* ---------------- FAQ ---------------- */}
-        <section className="band band-soft" id="faq" aria-labelledby="faq-title">
+        <section className="band band-mint" id="faq" aria-labelledby="faq-title">
           <div className="container narrow">
             <div className="section-head">
               <p className="eyebrow">Frequently asked questions</p>

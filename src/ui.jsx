@@ -101,8 +101,8 @@ export function Icon({ name, size = 20, className = "" }) {
 }
 
 /**
- * Paper-cut illustration from /public/images. Every file ships at 480, 768 and
- * 1024px wide. Square art (bungalow, swatches) is 1:1; scene art is 4:3.
+ * Gouache garden illustration from /public/images. Every file ships at 480, 768
+ * and 1024px wide. Square art (house, patio) is 1:1; materials art is 4:3.
  * Width/height are always set so the browser reserves space (no layout shift).
  */
 export function Illo({ name, alt = "", sizes, square = false, eager = false, className }) {
@@ -122,7 +122,7 @@ export function Illo({ name, alt = "", sizes, square = false, eager = false, cla
   );
 }
 
-/* Small paper-house mark drawn in code for the header wordmark. */
+/* Small garden-house mark drawn in code for the header wordmark. */
 function BrandMark() {
   return (
     <svg
@@ -133,11 +133,12 @@ function BrandMark() {
       aria-hidden="true"
       focusable="false"
     >
-      <circle cx="20" cy="20" r="20" fill="#FFF0DF" />
-      <path d="M9 20.5L20 11l11 9.5" fill="none" stroke="#006358" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M12.5 19v10.5h15V19" fill="#006358" />
-      <rect x="18" y="23" width="4.5" height="6.5" rx="1.2" fill="#FFF0DF" />
-      <path d="M8 33c6-3.5 16-3.5 24 0" fill="none" stroke="#E98B6B" strokeWidth="2.4" strokeLinecap="round" />
+      <circle cx="20" cy="20" r="20" fill="#FFFFFF" />
+      <circle cx="29" cy="11" r="4" fill="#F4D88F" />
+      <path d="M9 20.5L20 11l11 9.5" fill="none" stroke="#182E45" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M12.5 19v10.5h15V19" fill="#176044" />
+      <rect x="18" y="23" width="4.5" height="6.5" rx="1.2" fill="#F4D88F" />
+      <path d="M6.5 31.5c3-4 7-4.5 9-1.5-3.5 2.5-6.5 2.8-9 1.5zM33.5 31.5c-3-4-7-4.5-9-1.5 3.5 2.5 6.5 2.8 9 1.5z" fill="#75BE91" />
     </svg>
   );
 }
